@@ -3,13 +3,16 @@ package com.example.listshare;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
-
+import com.parse.Parse;
+import com.parse.ParseAnalytics;
 public class MainActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		Parse.initialize(this, "nW4RoU4uXcAd0jZ0yWzqfO0rwAqu8MtSbLdpYw7m", "yd0xuMmvr7ekL0wENpSi5yrbGDYrfCe3oD7ZCoKl");
 	}
 
 	@Override
