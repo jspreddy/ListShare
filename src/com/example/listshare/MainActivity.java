@@ -16,10 +16,10 @@ public class MainActivity extends Activity {
 		Parse.initialize(this, "nW4RoU4uXcAd0jZ0yWzqfO0rwAqu8MtSbLdpYw7m", "yd0xuMmvr7ekL0wENpSi5yrbGDYrfCe3oD7ZCoKl");
 		ParseAnalytics.trackAppOpened(getIntent());
 		
-		ParseObject testObject = new ParseObject("TestObject");
+		/*ParseObject testObject = new ParseObject("TestObject");
 		testObject.put("foo", "bar");
 		testObject.saveInBackground();
-		
+		*/
 	}
 
 	@Override
