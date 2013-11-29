@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.view.Menu;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
+import com.parse.ParseObject;
 public class MainActivity extends Activity {
 
 	@Override
@@ -13,6 +14,12 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		Parse.initialize(this, "nW4RoU4uXcAd0jZ0yWzqfO0rwAqu8MtSbLdpYw7m", "yd0xuMmvr7ekL0wENpSi5yrbGDYrfCe3oD7ZCoKl");
+		ParseAnalytics.trackAppOpened(getIntent());
+		
+		ParseObject testObject = new ParseObject("TestObject");
+		testObject.put("foo", "bar");
+		testObject.saveInBackground();
+		
 	}
 
 	@Override
