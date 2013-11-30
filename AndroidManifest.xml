@@ -37,6 +37,10 @@
             android:name="com.example.listshare.ViewListActivity"
             android:label="@string/title_activity_view_list" >
         </activity>
+        <activity
+            android:name="com.example.listshare.SignUpActivity"
+            android:label="@string/title_activity_sign_up" >
+        </activity>
     </application>
 
 </manifest>

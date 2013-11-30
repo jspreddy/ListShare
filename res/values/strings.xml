@@ -7,5 +7,6 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_edit_list_details">EditListDetailsActivity</string>
     <string name="title_activity_view_list">ViewListActivity</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
 
 </resources>
