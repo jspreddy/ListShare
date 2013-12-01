@@ -20,116 +20,129 @@ import android.widget.Toast;
 public class SignUpActivity extends Activity {
 
 	ParseUser user;
-	EditText t1,t2,t3;
+	EditText t1, t2, t3;
 	Button b1, b2;
-	String uname, password, rePassword;
+
 	Intent i;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sign_up);
-		
+
 		t1 = (EditText) findViewById(R.id.editText1);
 		t2 = (EditText) findViewById(R.id.editText2);
 		t3 = (EditText) findViewById(R.id.editText3);
 		b1 = (Button) findViewById(R.id.button1);
-				
-		/*t1.addTextChangedListener(new TextWatcher() {
-			
+
+		t1.addTextChangedListener(new TextWatcher() {
+
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				// TODO Auto-generated method stub
-			}		
+				isEmpty(t1);
+			}
+
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub				
+				// TODO Auto-generated method stub
 			}
+
 			@Override
 			public void afterTextChanged(Editable s) {
-				uname = t1.getText().toString();
-				if(uname.isEmpty()){
-					t1.setError("Enter valid username");
-					return;
-				}	
+
 			}
 		});
-			
+
 		t2.addTextChangedListener(new TextWatcher() {
-			
+
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				// TODO Auto-generated method stub
-			}		
+				isEmpty(t2);
+			}
+
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub				
+				// TODO Auto-generated method stub
 			}
+
 			@Override
 			public void afterTextChanged(Editable s) {
-				password = t2.getText().toString();
-				if(password.isEmpty()){
-					t2.setError("Password cannot be empty");
-					return;
-				}	
+
 			}
 		});
 
 		t3.addTextChangedListener(new TextWatcher() {
-			
+
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				// TODO Auto-generated method stub
-			}		
+				isEmpty(t3);
+			}
+
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub				
+				// TODO Auto-generated method stub
 			}
+
 			@Override
 			public void afterTextChanged(Editable s) {
-				rePassword = t3.getText().toString();
-				if(password.isEmpty()&& !password.equals(new String(rePassword))){
-					t3.setError("Re-entered password does not match Password");
-					return;
-				}	
+
 			}
 		});
 
-		*/
-		
 		b1.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				uname =t1.getText().toString();
-				password = t2.getText().toString();
-				rePassword = t3.getText().toString();
-				/*if(uname.matches(""))
-					t1.setError("Uname Null");
-				if(password.matches(""))
-					t2.setError("Pwd Null");*/			
-				if(password.matches(rePassword) ){//&& password.isEmpty() && uname.isEmpty()){
+				if (!isEmpty(t1) && !isEmpty(t2) && isMatching(t2, t3)) {
+					String uname, password;
+					uname = t1.getText().toString();
+					password = t2.getText().toString();
+
 					user = new ParseUser();
 					user.setUsername(uname);
 					user.setPassword(password);
+
 					user.signUpInBackground(new SignUpCallback() {
-						  public void done(ParseException e) {
-						    if (e == null) {
-						    	Intent i = new Intent(SignUpActivity.this, MainActivity.class);
-						    	finish();
-						    	startActivity(i);
-						    } else {
-						      Log.d("DEBUG","Sign up didn't succeed. Look at the ParseException to figure out what went wrong");
-						      Toast.makeText(SignUpActivity.this,"Signup failed", Toast.LENGTH_SHORT).show();
-						    }
-						  }
-						});
-					}
+						public void done(ParseException e) {
+							if (e == null) {
+								Intent i = new Intent(SignUpActivity.this, MainActivity.class);
+								startActivity(i);
+								finish();
+							} else {
+								Log.d("DEBUG", "Sign up didn't succeed. Look at the ParseException to figure out what went wrong");
+								Toast.makeText(SignUpActivity.this, "Signup failed", Toast.LENGTH_SHORT).show();
+								Toast.makeText(SignUpActivity.this, ""+e, Toast.LENGTH_SHORT).show();
+							}
+						}
+					});
 				}
+			}
 		});
+	}
+
+	public boolean isEmpty(EditText et) {
+		String text = et.getText().toString();
+		if (text.isEmpty()) {
+			et.setError("This cannot be empty.");
+			return true;
+		}
+		et.setError(null);
+		return false;
+	}
+
+	public boolean isMatching(EditText et_pwd1, EditText et_pwd2) {
+		String pwd1 = et_pwd1.getText().toString();
+		String pwd2 = et_pwd2.getText().toString();
+
+		if (!pwd1.equals(new String(pwd2))) {
+			et_pwd2.setError("re typed Password does not match.");
+			return false;
+		}
+		et_pwd2.setError(null);
+		return true;
 	}
 
 	@Override
