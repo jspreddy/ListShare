@@ -8,5 +8,6 @@
     <string name="title_activity_edit_list_details">EditListDetailsActivity</string>
     <string name="title_activity_view_list">ViewListActivity</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_add_item">AddItemActivity</string>
 
 </resources>
