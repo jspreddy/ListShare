@@ -1,11 +1,17 @@
 package com.example.listshare;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
@@ -22,14 +28,17 @@ public class HomeActivity extends Activity {
 	Intent i; 
 	ArrayAdapter<MainList> adapter;
 	ArrayList<MainList> listItem;
+	ProgressDialog pdMain;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 		
-		list = (ListView) findViewById(R.id.listView1);
-		new GetMainListItems(HomeActivity.this).execute();
+		pdMain=new ProgressDialog(HomeActivity.this);
 		
+		list = (ListView) findViewById(R.id.listView1);
+		//new GetMainListItems(HomeActivity.this).execute();
+		DisplayListContents();
 		b = (Button) findViewById(R.id.button1);
 		b.setOnClickListener(new OnClickListener() {
 			
@@ -42,12 +51,30 @@ public class HomeActivity extends Activity {
 		
 	}
 
-	public void DisplayListContents(ArrayList<MainList> mainList) {
+	public void DisplayListContents() {
 		// Get current User
+		pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		pdMain.setCancelable(false);
+		pdMain.setMessage("Loading List");
+		pdMain.show();
+		
 		ParseUser currentUser = ParseUser.getCurrentUser();
 		if (currentUser != null) {
-			adapter = new MainListAdapter(this,mainList);
-			list.setAdapter(adapter);
+			ParseQuery<ParseObject> query = ParseQuery.getQuery("Shares");
+			query.whereEqualTo("UserId_fk", currentUser);
+		
+			query.findInBackground(new FindCallback<ParseObject>() {
+
+				@Override
+				public void done(List<ParseObject> arg0, ParseException arg1) {
+					// TODO Auto-generated method stub
+					pdMain.dismiss();
+					Log.d("DEBUG", ""+arg0);
+				}
+			});
+			
+//			adapter = new MainListAdapter(this,listItem);
+//			list.setAdapter(adapter);
 
 			
 		} else {
