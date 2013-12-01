@@ -2,6 +2,7 @@ package com.example.listshare;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.LauncherActivity.ListItem;
 import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -9,10 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.listshare.objects.ListItemsObject;
+import com.example.listshare.objects.ListObject;
+import com.example.listshare.objects.SharesObject;
 import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 public class MainActivity extends Activity {
@@ -29,7 +34,11 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		
+		ParseObject.registerSubclass(ListItemsObject.class);
+		ParseObject.registerSubclass(ListObject.class);
+		ParseObject.registerSubclass(SharesObject.class);
+		
 		Parse.initialize(this, "nW4RoU4uXcAd0jZ0yWzqfO0rwAqu8MtSbLdpYw7m", "yd0xuMmvr7ekL0wENpSi5yrbGDYrfCe3oD7ZCoKl");
 		ParseAnalytics.trackAppOpened(getIntent());
 		homeActivity = new Intent(MainActivity.this, HomeActivity.class);

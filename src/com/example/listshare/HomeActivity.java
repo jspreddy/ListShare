@@ -3,9 +3,11 @@ package com.example.listshare;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.listshare.objects.ListObject;
+import com.example.listshare.objects.MainList;
+import com.example.listshare.objects.SharesObject;
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -27,7 +29,7 @@ public class HomeActivity extends Activity {
 	Button b;
 	Intent i; 
 	ArrayAdapter<MainList> adapter;
-	ArrayList<MainList> listItem;
+	ArrayList<MainList> listOfList;
 	ProgressDialog pdMain;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +37,13 @@ public class HomeActivity extends Activity {
 		setContentView(R.layout.activity_home);
 		
 		pdMain=new ProgressDialog(HomeActivity.this);
+		listOfList=new ArrayList<MainList>();
 		
 		list = (ListView) findViewById(R.id.listView1);
 		//new GetMainListItems(HomeActivity.this).execute();
 		DisplayListContents();
 		b = (Button) findViewById(R.id.button1);
+		
 		b.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -60,22 +64,25 @@ public class HomeActivity extends Activity {
 		
 		ParseUser currentUser = ParseUser.getCurrentUser();
 		if (currentUser != null) {
-			ParseQuery<ParseObject> query = ParseQuery.getQuery("Shares");
+			
+			ParseQuery<SharesObject> query = SharesObject.getQuery();
+			
 			query.whereEqualTo("UserId_fk", currentUser);
-		
-			query.findInBackground(new FindCallback<ParseObject>() {
-
+			query.include("UserId_fk");
+			query.include("ListId_fk");
+			
+			query.findInBackground(new FindCallback<SharesObject>() {
 				@Override
-				public void done(List<ParseObject> arg0, ParseException arg1) {
-					// TODO Auto-generated method stub
+				public void done(List<SharesObject> arg0, ParseException arg1) {
+					for(SharesObject obj : arg0){
+						ParseUser user = obj.getParseUser("UserId_fk");
+						ListObject listObj = (ListObject) obj.getParseObject("ListId_fk");
+						listOfList.add( new MainList(listObj.getName(), user.getUsername(), listObj.getId()) );
+					}
+					
 					pdMain.dismiss();
-					Log.d("DEBUG", ""+arg0);
 				}
 			});
-			
-//			adapter = new MainListAdapter(this,listItem);
-//			list.setAdapter(adapter);
-
 			
 		} else {
 			Log.d("DEBUG", "No user loggrd in");
@@ -83,8 +90,6 @@ public class HomeActivity extends Activity {
 			finish();
 			startActivity(i);
 		}
-		
-		// Get all the lists of current user
 		
 	}
 
