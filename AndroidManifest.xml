@@ -26,22 +26,27 @@
             </intent-filter>
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name="com.example.listshare.HomeActivity"
             android:label="@string/title_activity_home" >
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name="com.example.listshare.EditListDetailsActivity"
             android:label="@string/title_activity_edit_list_details" >
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name="com.example.listshare.ViewListActivity"
             android:label="@string/title_activity_view_list" >
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name="com.example.listshare.SignUpActivity"
             android:label="@string/title_activity_sign_up" >
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name="com.example.listshare.AddItemActivity"
             android:label="@string/title_activity_add_item" >
         </activity>
