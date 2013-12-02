@@ -130,7 +130,7 @@ public class HomeActivity extends Activity {
 								lvMainList.setAdapter(la);
 							}
 							else{
-								Toast.makeText(HomeActivity.this, "No Movies to display", Toast.LENGTH_SHORT).show();
+								Toast.makeText(HomeActivity.this, "No Lists to display", Toast.LENGTH_SHORT).show();
 							}
 							
 						}

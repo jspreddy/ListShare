@@ -6,7 +6,7 @@ public class Items {
 	double quantity;
 	int count;
 	
-	public Items(String id, String name, String editedBy, String unit, float quantity, int count) {
+	public Items(String id, String name, String editedBy, String unit, double quantity, int count) {
 		this.id = id;
 		this.name = name;
 		this.editedBy = editedBy;

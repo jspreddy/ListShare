@@ -1,13 +1,18 @@
 package com.example.listshare;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.example.listshare.HomeActivity.ListAdapter;
 import com.example.listshare.HomeActivity.MainViewHolder;
 import com.example.listshare.objects.Items;
 import com.example.listshare.objects.ListItemsObject;
 import com.example.listshare.objects.ListObject;
 import com.example.listshare.objects.MainList;
 import com.example.listshare.objects.SharesObject;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -27,6 +32,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ViewListActivity extends Activity {
 
@@ -37,6 +43,8 @@ public class ViewListActivity extends Activity {
 	ParseUser currentUser;
 	ProgressDialog pdMain;
 	ArrayList<Items> listofItem;
+	ListObject listObject;
+	ItemListAdapter adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +80,9 @@ public class ViewListActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Intent i = new Intent(ViewListActivity.this, AddItemActivity.class);
+				i.putExtra("ListId", listId);
+				i.putExtra("flag", 1);
+				i.putExtra("ItemId","");
 				startActivity(i);
 			}
 		});
@@ -85,7 +96,50 @@ public class ViewListActivity extends Activity {
 		
 		if (currentUser != null) {
 			
-		//Query
+			// Get list object
+			/*ParseQuery<ListObject> listQuery = ListObject.getQuery();
+			listQuery.getInBackground(listId, new GetCallback<ListObject>() {
+				
+				@Override
+				public void done(ListObject object, ParseException e) {
+					if(e == null){
+						listObject = object;
+					}else{
+						listObject = null;
+					}
+				}
+			});
+			*/
+			ParseQuery<ListItemsObject> itemsQuery = ListItemsObject.getQuery();
+			itemsQuery.whereEqualTo("ListId_fk", listId);
+			/*itemsQuery.include("ListId_fk");
+			itemsQuery.include("editedBy");
+			itemsQuery.include("item_name");
+			itemsQuery.include("count");
+			itemsQuery.include("quantity");
+			itemsQuery.include("units");
+			itemsQuery.include(""); */
+			
+			itemsQuery.findInBackground(new FindCallback<ListItemsObject>() {
+				
+				@Override
+				public void done(List<ListItemsObject> item, ParseException e) {
+					for(ListItemsObject obj : item){
+						listofItem.add(new Items(obj.getId(),obj.getName(),obj.getEditedBy(),obj.getUnit(),obj.getQuantity(),obj.getCount()));
+					}
+					
+				}
+			});
+
+			pdMain.dismiss();
+			if(listofItem !=null && listofItem.size() != 0){
+				adapter = new ItemListAdapter(ViewListActivity.this, listofItem);
+				listView.setAdapter(adapter);
+			}
+			else{
+				Toast.makeText(ViewListActivity.this, "No itemsto display", Toast.LENGTH_SHORT).show();
+			}
+
 			
 		} else {
 			Log.d("DEBUG", "No user loggrd in");
@@ -104,6 +158,7 @@ public class ViewListActivity extends Activity {
 
 	class ItemListAdapter extends ArrayAdapter<Items>{
 
+		
 		Context context;
 		ArrayList<Items> localList;
 		
