@@ -1,5 +1,6 @@
 package com.example.listshare;
 
+import com.example.listshare.objects.ListObject;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -61,7 +62,7 @@ public class AddItemActivity extends Activity {
 		}
 
 		if (flag == 2) {
-			ParseQuery<ParseObject> query = ParseQuery.getQuery("ListItems");
+/*			ParseQuery<ParseObject> query = ParseQuery.getQuery("ListItems");
 			query.getInBackground(itemId, new GetCallback<ParseObject>() {
 				public void done(ParseObject object, ParseException e) {
 					if (e == null) {
@@ -78,7 +79,7 @@ public class AddItemActivity extends Activity {
 					}
 				}
 			});
-		}
+*/		}
 
 		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
@@ -150,46 +151,34 @@ public class AddItemActivity extends Activity {
 		count = t3.getText().toString();
 		unit = spinner.getSelectedItem().toString();
 		user = ParseUser.getCurrentUser();
-		
-		ParseQuery<ParseObject> query1 = ParseQuery.getQuery("List");
-		query1.getInBackground(listId, new GetCallback<ParseObject>() {
-			@Override
-			public void done(ParseObject object, ParseException e) {
-				if (e == null) {
-					listObject = object;
-					Log.d("DEBUG", "Done");
-				} else {
-					listObject = null;
-					Log.d("DEBUG", "Null");
-				}
-			}
-		});
-
-		if(listObject != null){
+/*		ListObject lo = new ListObject();
+		lo.setObjectId(listId);
+		try {
+			lo.fetch();
+		} catch (ParseException e2) {
+			e2.printStackTrace();
+		}
+*/
 		if (flag == 1) {
 			// Insert
-			ParseObject item = new ParseObject("ListItems");
+/*			ParseObject item = new ParseObject("ListItems");
 			item.put("quantity", quantity);
 			item.put("units", unit);
 			item.put("count", count);
 			item.put("item_name", name);
-			item.put("ListId_fk", listObject);
+			item.put("ListId_fk", lo);
 			item.put("editedBy", user);
 			item.saveInBackground();
-
+*/
 		} else if (flag == 2) {
 			//update
-			currentItem.put("quantity", quantity);
+/*			currentItem.put("quantity", quantity);
 			currentItem.put("units", unit);
 			currentItem.put("count", count);
 			currentItem.put("item_name", name);
 			currentItem.put("editedBy", user);
 			currentItem.saveInBackground();
-		}
-	}else
-		Log.d("Debug","Error");
-		Intent i = new Intent();
-		setResult(RESULT_OK, i);
+*/		}
 		onBackPressed();
 	}
 
