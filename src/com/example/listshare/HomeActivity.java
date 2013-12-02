@@ -135,11 +135,7 @@ public class HomeActivity extends Activity {
 								lvMainList.setAdapter(la);
 							}
 							else{
-<<<<<<< HEAD
 								Toast.makeText(HomeActivity.this, "Nothing to Show", Toast.LENGTH_SHORT).show();
-=======
-								Toast.makeText(HomeActivity.this, "No Lists to display", Toast.LENGTH_SHORT).show();
->>>>>>> origin/viewList-2
 							}
 						}
 					});
