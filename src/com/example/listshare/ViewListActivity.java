@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -201,5 +202,17 @@ public class ViewListActivity extends Activity {
 			t5= (TextView) row.findViewById(R.id.textView5);
 		}
 	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		if (item.getItemId() == R.id.action_logout) {
+			ParseUser.logOut();
+			Intent i = new Intent(ViewListActivity.this, MainActivity.class);
+			startActivity(i);
+			finish();
+		}
+		return true;
+	}
+	
 }
 

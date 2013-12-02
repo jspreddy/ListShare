@@ -13,18 +13,23 @@ import com.parse.ParseUser;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -212,4 +217,15 @@ public class HomeActivity extends Activity {
 		}
 	}
 	
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		if (item.getItemId() == R.id.action_logout) {
+			ParseUser.logOut();
+			Intent i = new Intent(HomeActivity.this, MainActivity.class);
+			startActivity(i);
+			finish();
+		}
+		return true;
+	}
 }
