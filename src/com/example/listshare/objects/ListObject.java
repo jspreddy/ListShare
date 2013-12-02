@@ -19,6 +19,10 @@ public class ListObject extends ParseObject{
 		return getObjectId();
 	}
 	
+	public void setUser(ParseUser user){
+		put("createdBy",user);
+	}
+	
 	public static ParseQuery<ListObject> getQuery() {
 		return ParseQuery.getQuery(ListObject.class);
 	}

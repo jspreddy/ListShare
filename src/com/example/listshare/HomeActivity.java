@@ -78,7 +78,7 @@ public class HomeActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				i = new Intent(HomeActivity.this,EditListDetailsActivity.class);
-				startActivity(i);
+				startActivityForResult(i,0);
 			}
 		});
 		

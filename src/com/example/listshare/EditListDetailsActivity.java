@@ -51,83 +51,138 @@ public class EditListDetailsActivity extends Activity {
 		
 		btnEditListName = (Button) findViewById(R.id.btnEditListName);
 		btnAddShare = (Button) findViewById(R.id.btnAddShare);
+		if(list_id!=null)
+		{	
+			ParseQuery<ListObject> listQuery = ListObject.getQuery();
+			listQuery.include("createdBy");
+			listQuery.getInBackground(list_id, new GetCallback<ListObject>(){
+				@Override
+				public void done(ListObject arg0, ParseException e) {
+					if(e==null){
+						listObject = arg0;
+						btnEditListName.setText(listObject.getName());
+						ParseUser createdBy =listObject.getParseUser("createdBy"); 
+						if(createdBy.getObjectId().equals(currentUser.getObjectId())){
+							btnEditListName.setOnClickListener(new OnClickListener() {
+								@Override
+								public void onClick(View v) {
+									
+									AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
 		
-		ParseQuery<ListObject> listQuery = ListObject.getQuery();
-		listQuery.include("createdBy");
-		listQuery.getInBackground(list_id, new GetCallback<ListObject>(){
-			@Override
-			public void done(ListObject arg0, ParseException e) {
-				if(e==null){
-					listObject = arg0;
-					btnEditListName.setText(listObject.getName());
-					ParseUser createdBy =listObject.getParseUser("createdBy"); 
-					if(createdBy.getObjectId().equals(currentUser.getObjectId())){
-						btnEditListName.setOnClickListener(new OnClickListener() {
-							@Override
-							public void onClick(View v) {
+									alert.setTitle("List Name");
+		
+									// Set an EditText view to get user input
+									final EditText input = new EditText(EditListDetailsActivity.this);
+									input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+									alert.setView(input);
+		
+									alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int whichButton) {
+											String listName = input.getText().toString();
+											if(!listName.isEmpty()){
+												pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+												pdMain.setCancelable(false);
+												pdMain.setMessage("Loading List");
+												pdMain.show();
+												listObject.setName(listName);
+												listObject.saveInBackground(new SaveCallback(){
+													@Override
+													public void done(ParseException e) {
+														pdMain.dismiss();
+														if(e==null){
+															btnEditListName.setText(listObject.getName());
+															nameChanged=true;
+														}
+														else{
+															Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
+														}
+													}
+												});
+											}
+										}
+									});
+		
+									alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int whichButton) {
+											// Canceled.
+										}
+									});
+		
+									alert.show();
+								}
+							});
+						}
+						else{
+							btnEditListName.setOnClickListener(new OnClickListener() {
+	
+								@Override
+								public void onClick(View v) {
+									Toast.makeText(getApplicationContext(), "You dont own this list. You can't change it.", Toast.LENGTH_SHORT).show();
+								}
 								
-								AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
-	
-								alert.setTitle("List Name");
-	
-								// Set an EditText view to get user input
-								final EditText input = new EditText(EditListDetailsActivity.this);
-								input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-								alert.setView(input);
-	
-								alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int whichButton) {
-										String listName = input.getText().toString();
-										if(!listName.isEmpty()){
-											pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-											pdMain.setCancelable(false);
-											pdMain.setMessage("Loading List");
-											pdMain.show();
-											listObject.setName(listName);
-											listObject.saveInBackground(new SaveCallback(){
-												@Override
-												public void done(ParseException e) {
-													pdMain.dismiss();
-													if(e==null){
-														btnEditListName.setText(listObject.getName());
-														nameChanged=true;
-													}
-													else{
-														Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
-													}
-												}
-											});
+							});
+						}
+					}
+					else{
+						Toast.makeText(getApplicationContext(), "Error Retreiving: Try again.", Toast.LENGTH_SHORT).show();
+						finish();
+					}
+				}
+			});
+		}
+		else{
+			btnEditListName.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					
+					AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
+
+					alert.setTitle("List Name");
+
+					// Set an EditText view to get user input
+					final EditText input = new EditText(EditListDetailsActivity.this);
+					input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+					alert.setView(input);
+
+					alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+							String listName = input.getText().toString();
+							if(!listName.isEmpty()){
+								pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+								pdMain.setCancelable(false);
+								pdMain.setMessage("Loading List");
+								pdMain.show();
+								
+								listObject = new ListObject();
+								listObject.setName(listName);
+								listObject.setUser(currentUser);
+								listObject.saveInBackground(new SaveCallback(){
+									@Override
+									public void done(ParseException e) {
+										pdMain.dismiss();
+										if(e==null){
+											btnEditListName.setText(listObject.getName());
+											nameChanged=true;
+										}
+										else{
+											Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
 										}
 									}
 								});
-	
-								alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int whichButton) {
-										// Canceled.
-									}
-								});
-	
-								alert.show();
 							}
-						});
-					}
-					else{
-						btnEditListName.setOnClickListener(new OnClickListener() {
+						}
+					});
 
-							@Override
-							public void onClick(View v) {
-								Toast.makeText(getApplicationContext(), "You dont own this list. You can't change it.", Toast.LENGTH_SHORT).show();
-							}
-							
-						});
-					}
+					alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+							// Canceled.
+						}
+					});
+
+					alert.show();
 				}
-				else{
-					Toast.makeText(getApplicationContext(), "Error Retreiving: Try again.", Toast.LENGTH_SHORT).show();
-					finish();
-				}
-			}
-		});
+			});
+		}
 		
 		btnAddShare.setOnClickListener(new OnClickListener() {
 			
