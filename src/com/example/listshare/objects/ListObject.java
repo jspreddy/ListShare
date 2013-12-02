@@ -11,6 +11,10 @@ public class ListObject extends ParseObject{
 		return getString("list_name");
 	}
 	
+	public void setName(String value){
+		put("list_name", value);
+	}
+	
 	public String getId(){
 		return getObjectId();
 	}
@@ -18,4 +22,6 @@ public class ListObject extends ParseObject{
 	public static ParseQuery<ListObject> getQuery() {
 		return ParseQuery.getQuery(ListObject.class);
 	}
+	
+	
 }

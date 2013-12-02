@@ -103,9 +103,14 @@ public class HomeActivity extends Activity {
 				public void done(List<SharesObject> arg0, ParseException arg1) {
 					if(arg1 == null){
 						for(SharesObject obj : arg0){
-							ParseUser user = obj.getParseUser("UserId_fk");
 							ListObject listObj = (ListObject) obj.getParseObject("ListId_fk");
-							listOfList.add( new MainList(listObj.getName(), user.getUsername(), listObj.getId()) );
+							ParseUser owner = listObj.getParseUser("createdBy");
+							try {
+								owner.fetchIfNeeded();
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+							listOfList.add( new MainList(listObj.getName(), owner.getUsername(), listObj.getId()) );
 						}
 					}
 					
@@ -114,7 +119,6 @@ public class HomeActivity extends Activity {
 					listQuery.include("createdBy");
 					
 					listQuery.findInBackground(new FindCallback<ListObject>(){
-
 						@Override
 						public void done(List<ListObject> arg0, ParseException arg1) {
 							if(arg1 == null){
@@ -130,9 +134,8 @@ public class HomeActivity extends Activity {
 								lvMainList.setAdapter(la);
 							}
 							else{
-								Toast.makeText(HomeActivity.this, "No Movies to display", Toast.LENGTH_SHORT).show();
+								Toast.makeText(HomeActivity.this, "Nothing to Show", Toast.LENGTH_SHORT).show();
 							}
-							
 						}
 					});
 					//*/

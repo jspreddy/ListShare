@@ -2,16 +2,23 @@ package com.example.listshare;
 
 import java.util.List;
 
+import com.example.listshare.objects.ListObject;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -19,49 +26,112 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class EditListDetailsActivity extends Activity {
 
-	EditText t;
-	Button b1, b2;
-	int flag;
+	Button btnAddShare, btnEditListName;
 	ParseUser currentUser;
-	List<ParseObject> objectlist;
+	
+	String list_id;
+	ListObject listObject;
+	ProgressDialog pdMain;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_list_details);
 
-		// flag =1 if add button is pressed and flag = 0 if long press on list
-		// item.
-
-		// Intent intent = getIntent();
-		// int list_id = intent.getIntExtra("list_id", -1);
-		t = (EditText) findViewById(R.id.editText1);
-		b1 = (Button) findViewById(R.id.button1);
-		b2 = (Button) findViewById(R.id.button2);
+		Intent intent = getIntent();
+		list_id = intent.getStringExtra("list_id");
+		currentUser = ParseUser.getCurrentUser();
+		pdMain=new ProgressDialog(EditListDetailsActivity.this);
 		
-		if (getIntent().getExtras() != null) {
-			flag = getIntent().getExtras().getInt("flag");
-			currentUser = ParseUser.getCurrentUser();
-		}
 		
-		b1.setOnClickListener(new OnClickListener() {
-
+		btnEditListName = (Button) findViewById(R.id.btnEditListName);
+		btnAddShare = (Button) findViewById(R.id.btnAddShare);
+		
+		ParseQuery<ListObject> listQuery = ListObject.getQuery();
+		listQuery.include("createdBy");
+		listQuery.getInBackground(list_id, new GetCallback<ListObject>(){
 			@Override
-			public void onClick(View v) {
-				updateDatabase();
-				onBackPressed();
-				finish();
+			public void done(ListObject arg0, ParseException e) {
+				if(e==null){
+					listObject = arg0;
+					btnEditListName.setText(listObject.getName());
+					ParseUser createdBy =listObject.getParseUser("createdBy"); 
+					if(createdBy.getObjectId().equals(currentUser.getObjectId())){
+						btnEditListName.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								
+								AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
+	
+								alert.setTitle("List Name");
+	
+								// Set an EditText view to get user input
+								final EditText input = new EditText(EditListDetailsActivity.this);
+								input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+								alert.setView(input);
+	
+								alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int whichButton) {
+										String listName = input.getText().toString();
+										if(!listName.isEmpty()){
+											pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+											pdMain.setCancelable(false);
+											pdMain.setMessage("Loading List");
+											pdMain.show();
+											listObject.setName(listName);
+											listObject.saveInBackground(new SaveCallback(){
+												@Override
+												public void done(ParseException e) {
+													pdMain.dismiss();
+													if(e==null){
+														btnEditListName.setText(listObject.getName());
+													}
+													else{
+														Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
+													}
+												}
+											});
+										}
+									}
+								});
+	
+								alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int whichButton) {
+										// Canceled.
+									}
+								});
+	
+								alert.show();
+							}
+						});
+					}
+					else{
+						btnEditListName.setOnClickListener(new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								Toast.makeText(getApplicationContext(), "You dont own this list. You can't change it.", Toast.LENGTH_SHORT).show();
+							}
+							
+						});
+					}
+				}
+				else{
+					Toast.makeText(getApplicationContext(), "Error Retreiving: Try again.", Toast.LENGTH_SHORT).show();
+					finish();
+				}
 			}
 		});
 		
-		b2.setOnClickListener(new OnClickListener() {
+		btnAddShare.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				//show dialogue box or dropdown box.
-				//store names into an arraylist
+				
 			}
 		});
 	}
@@ -71,45 +141,6 @@ public class EditListDetailsActivity extends Activity {
 		Intent i = new Intent();
 		setResult(RESULT_OK, i);
 		super.onBackPressed();
-	}
-
-	private void updateDatabase() {
-		if(flag == 0){
-			//update
-			
-		}else if(flag == 1){
-			//insert list
-			
-			ParseObject object = new ParseObject("List");
-			object.put("list_name", t.getText().toString());
-			object.put("createdBy", currentUser.getString("objectId"));
-			object.saveInBackground();
-			
-			// insert into shared
-			ParseQuery<ParseObject> query = ParseQuery.getQuery("List");
-			query.whereEqualTo("list_name", t.getText().toString());
-			query.whereEqualTo("createdBy", currentUser.getString("objectId"));
-			query.findInBackground(new FindCallback<ParseObject>() {
-				
-				@Override
-				public void done(List<ParseObject> list, ParseException e) {
-					if (e == null) {
-			            Log.d("score", "Retrieved " + list.size() + " scores");
-			            objectlist = list;
-			        } else {
-			            Log.d("score", "Error: " + e.getMessage());
-			        }
-			    }
-			});
-			
-			
-			// for each shared user list id start for loop
-			{
-				ParseObject sharedObject = new ParseObject("Shares");
-				sharedObject.put("ListId_fk", objectlist.get(0).getString("objectId"));
-				sharedObject.put("UserId_fk","");
-			}	
-		}
 	}
 
 	@Override
