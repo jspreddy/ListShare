@@ -63,7 +63,7 @@ public class HomeActivity extends Activity {
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				Intent i = new Intent(HomeActivity.this,EditListDetailsActivity.class);
 				i.putExtra("list_id", listOfList.get(arg2).getId());
-				startActivity(i);
+				startActivityForResult(i,0);
 				return true;
 			}
 			
@@ -85,6 +85,7 @@ public class HomeActivity extends Activity {
 	}
 
 	public void DisplayListContents() {
+		listOfList.clear();
 		pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		pdMain.setCancelable(false);
 		pdMain.setMessage("Loading List");
@@ -201,4 +202,14 @@ public class HomeActivity extends Activity {
 		return true;
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		if(requestCode==0 && resultCode==RESULT_OK){
+			Boolean nameChanged = data.getBooleanExtra("nameChanged", false);
+			if(nameChanged){
+				DisplayListContents();
+			}
+		}
+	}
+	
 }

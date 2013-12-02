@@ -36,6 +36,7 @@ public class EditListDetailsActivity extends Activity {
 	String list_id;
 	ListObject listObject;
 	ProgressDialog pdMain;
+	Boolean nameChanged = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +90,7 @@ public class EditListDetailsActivity extends Activity {
 													pdMain.dismiss();
 													if(e==null){
 														btnEditListName.setText(listObject.getName());
+														nameChanged=true;
 													}
 													else{
 														Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
@@ -138,9 +140,12 @@ public class EditListDetailsActivity extends Activity {
 
 	@Override
 	public void onBackPressed() {
-		Intent i = new Intent();
-		setResult(RESULT_OK, i);
-		super.onBackPressed();
+		if(nameChanged==true){
+			Intent i = new Intent();
+			i.putExtra("nameChanged", true);
+			setResult(RESULT_OK, i);
+		}
+		finish();
 	}
 
 	@Override
