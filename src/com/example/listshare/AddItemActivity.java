@@ -1,5 +1,10 @@
 package com.example.listshare;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -14,15 +19,21 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class AddItemActivity extends Activity {
 
 	EditText t1,t2,t3;
 	Button b1,b2;
-	String name, quantity, count,unit;
+	String name, quantity, count,unit,listId, itemId;
 	Spinner spinner;
 	String [] values;
+	int flag;
+	ParseUser user;
+	TextView t;
+	ArrayAdapter<String> adapter;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,11 +43,40 @@ public class AddItemActivity extends Activity {
 		t3 = (EditText) findViewById(R.id.editText3);
 		b1 = (Button) findViewById(R.id.button1);
 		b2 = (Button) findViewById(R.id.button2);
-		spinner = (Spinner) findViewById(R.id.spinner1);
+		t = (TextView) findViewById(R.id.textView6);
+		
 		values = new String[]{"liter","pound","lb","OZ","grams"};
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddItemActivity.this, android.R.layout.simple_spinner_item,values);
+		spinner = (Spinner) findViewById(R.id.spinner1);
+		adapter = new ArrayAdapter<String>(AddItemActivity.this, android.R.layout.simple_spinner_item,values);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
+		
+		if (getIntent().getExtras() != null) {
+			listId = getIntent().getExtras().getString("ListId");
+			flag = getIntent().getExtras().getInt("flag");
+			itemId = getIntent().getExtras().getString("ItemId");
+		}
+		
+		if(flag == 2){
+			ParseQuery<ParseObject> query = ParseQuery.getQuery("ListItems");
+			query.getInBackground(itemId, new GetCallback<ParseObject>() {
+			  public void done(ParseObject object, ParseException e) {
+			    if (e == null) {
+			    	t1.setText(object.getString("item_name"));
+			    	t2.setText(object.getString("quantity"));
+			    	t3.setText(object.getString("count"));
+			    	unit = object.getString("units");
+			    	int position = adapter.getPosition(unit);
+			    	spinner.setSelection(position);
+			    	
+			    	// set user
+			    	
+			    } else {
+			      // something went wrong
+			    }
+			  }
+			});
+		}
 		
 		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -112,10 +152,40 @@ public class AddItemActivity extends Activity {
 		quantity = t2.getText().toString();
 		count = t3.getText().toString();
 		unit = spinner.getSelectedItem().toString();
-		//Execute query
+		user = ParseUser.getCurrentUser();
+		
+		if(flag == 1){
+			// Insert
+			ParseObject item = new ParseObject("ListItems");
+			item.put("quantity", quantity);
+			item.put("units", unit);
+			item.put("count", count);
+			item.put("item_name", name);
+			item.put("ListId_fk", listId);
+			item.put("editedBy", user.getString("objectId"));
+			item.saveInBackground();
+			Toast.makeText(this, name+" "+" "+quantity+" "+count+" "+ unit, Toast.LENGTH_SHORT).show();
+		}else if(flag == 2){
+			//update			
+			ParseQuery<ParseObject> query = ParseQuery.getQuery("ListItems");
+			query.getInBackground(itemId, new GetCallback<ParseObject>() {
+				@Override
+				public void done(ParseObject item, ParseException e) {
+			    if (e == null) {
+					item.put("quantity", quantity);
+					item.put("units", unit);
+					item.put("count", count);
+					item.put("item_name", name);
+					item.put("ListId_fk", listId);
+					item.put("editedBy", user.getString("objectId"));
+					item.saveInBackground();
+			    }
+			  }
+			});
+		}
 		Toast.makeText(this, name+" "+" "+quantity+" "+count+" "+ unit, Toast.LENGTH_SHORT).show();
-		Intent i = new Intent();
-		setResult(RESULT_OK, i);
+		//Intent i = new Intent();
+		//setResult(RESULT_OK, i);
 		onBackPressed();	
 	}
 
