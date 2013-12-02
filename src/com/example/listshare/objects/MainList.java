@@ -9,5 +9,17 @@ public class MainList {
 		this.owner = owner;
 		this.id=id;
 	}
+
+	public String getTitle() {
+		return this.name;
+	}
+
+	public String getOwner() {
+		return this.owner;
+	}
+
+	public String getId() {
+		return this.id;
+	}
 	
 }

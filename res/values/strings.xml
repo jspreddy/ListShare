@@ -4,9 +4,14 @@
     <string name="app_name">ListShare</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_edit_list_details">EditListDetailsActivity</string>
     <string name="title_activity_view_list">ViewListActivity</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
 
+    <string name="btnListAdd">Add List</string>
+    
+    <string name="Title">Title</string>
+    <string name="Owner">Owner: </string>
 </resources>
