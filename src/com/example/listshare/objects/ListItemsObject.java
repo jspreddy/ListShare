@@ -1,7 +1,5 @@
 package com.example.listshare.objects;
 
-import java.io.ObjectInputStream.GetField;
-
 import com.parse.*;
 
 @ParseClassName("ListItems")
@@ -17,12 +15,8 @@ public class ListItemsObject extends ParseObject{
 		return getString("item_name");
 	}
 
-	public String getEditedBy() {
-		return getString("editedBy");
-	}
-
 	public String getUnit() {
-		return getString("unit");
+		return getString("units");
 	}
 
 	public double getQuantity() {

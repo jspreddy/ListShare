@@ -44,7 +44,6 @@ public class ViewListActivity extends Activity {
 	ProgressDialog pdMain;
 	ArrayList<Items> listofItem;
 	ListObject listObject;
-	ItemListAdapter adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +53,13 @@ public class ViewListActivity extends Activity {
 		if(getIntent().getExtras()!= null){
 			listId = getIntent().getExtras().getString("list_id");
 		}
+		else{
+			finish();
+		}
 		currentUser = ParseUser.getCurrentUser();
 		pdMain=new ProgressDialog(ViewListActivity.this);
-
+		listofItem=new ArrayList<Items>();
+		
 		listView = (ListView) findViewById(R.id.listView1);
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -67,7 +70,7 @@ public class ViewListActivity extends Activity {
 				i.putExtra("ListId", listId);
 				i.putExtra("flag", 2);
 				i.putExtra("ItemId", listofItem.get(arg2).getId());
-				startActivity(i);				
+				startActivity(i);
 			}
 		});
 
@@ -96,57 +99,50 @@ public class ViewListActivity extends Activity {
 		
 		if (currentUser != null) {
 			
-			// Get list object
-			/*ParseQuery<ListObject> listQuery = ListObject.getQuery();
-			listQuery.getInBackground(listId, new GetCallback<ListObject>() {
-				
-				@Override
-				public void done(ListObject object, ParseException e) {
-					if(e == null){
-						listObject = object;
-					}else{
-						listObject = null;
-					}
-				}
-			});
-			*/
+			
 			ParseQuery<ListItemsObject> itemsQuery = ListItemsObject.getQuery();
-			itemsQuery.whereEqualTo("ListId_fk", listId);
-			/*itemsQuery.include("ListId_fk");
 			itemsQuery.include("editedBy");
-			itemsQuery.include("item_name");
-			itemsQuery.include("count");
-			itemsQuery.include("quantity");
-			itemsQuery.include("units");
-			itemsQuery.include(""); */
+			ListObject lo = new ListObject();
+			lo.setObjectId(listId);
+			try {
+				lo.fetch();
+			} catch (ParseException e2) {
+				e2.printStackTrace();
+			}
+			itemsQuery.whereEqualTo("ListId_fk", lo);
 			
 			itemsQuery.findInBackground(new FindCallback<ListItemsObject>() {
 				
 				@Override
 				public void done(List<ListItemsObject> item, ParseException e) {
 					for(ListItemsObject obj : item){
-						listofItem.add(new Items(obj.getId(),obj.getName(),obj.getEditedBy(),obj.getUnit(),obj.getQuantity(),obj.getCount()));
+						String id=obj.getId();
+						String name = obj.getName();
+						ParseUser editedBy = obj.getParseUser("editedBy");
+						String username = editedBy.getUsername();
+						String unit = obj.getUnit();
+						Double qty = obj.getQuantity();
+						int count = obj.getCount();
+						Log.d("DEBUG","test");
+						listofItem.add(new Items(obj.getId(),obj.getName(),editedBy.getUsername(),obj.getUnit(),obj.getQuantity(),obj.getCount()));
 					}
 					
+					pdMain.dismiss();
+					if(listofItem !=null && listofItem.size() != 0){
+						ListItemAdapter adapter = new ListItemAdapter(ViewListActivity.this, listofItem);
+						listView.setAdapter(adapter);
+					}
+					else{
+						Toast.makeText(ViewListActivity.this, "No itemsto display", Toast.LENGTH_SHORT).show();
+					}
 				}
 			});
-
-			pdMain.dismiss();
-			if(listofItem !=null && listofItem.size() != 0){
-				adapter = new ItemListAdapter(ViewListActivity.this, listofItem);
-				listView.setAdapter(adapter);
-			}
-			else{
-				Toast.makeText(ViewListActivity.this, "No itemsto display", Toast.LENGTH_SHORT).show();
-			}
-
-			
 		} else {
-			Log.d("DEBUG", "No user loggrd in");
+			Log.d("DEBUG", "No user logged in");
 			i = new Intent(ViewListActivity.this, MainActivity.class);
 			finish();
 			startActivity(i);
-		}		
+		}
 	}
 
 	@Override
@@ -156,14 +152,14 @@ public class ViewListActivity extends Activity {
 		return true;
 	}
 
-	class ItemListAdapter extends ArrayAdapter<Items>{
+	class ListItemAdapter extends ArrayAdapter<Items>{
 
 		
 		Context context;
 		ArrayList<Items> localList;
 		
-		public ItemListAdapter(Context context, ArrayList<Items> list) {
-			super(context, R.layout.view_list_item);
+		public ListItemAdapter(Context context, ArrayList<Items> list) {
+			super(context,R.layout.view_list_item, R.id.textView1, list);
 			this.context = context;
 			this.localList = list;
 		}
@@ -171,15 +167,15 @@ public class ViewListActivity extends Activity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View row = convertView;
-			MainViewHolder holder = null;
+			ListItemViewHolder holder = null;
 			if(convertView == null){
 				LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				row = inflater.inflate(R.layout.view_list_item, parent, false);
-				holder = new MainViewHolder(row);
+				holder = new ListItemViewHolder(row);
 				row.setTag(holder);
 			}
 			else{
-				holder = (MainViewHolder) row.getTag();
+				holder = (ListItemViewHolder) row.getTag();
 			}
 
 			Items item = this.localList.get(position);
@@ -194,10 +190,10 @@ public class ViewListActivity extends Activity {
 
 	}
 	
-	class MainViewHolder{
+	class ListItemViewHolder{
 		public TextView t1,t2,t3,t4,t5;
 		
-		MainViewHolder(View row){
+		ListItemViewHolder(View row){
 			t1= (TextView) row.findViewById(R.id.textView1);
 			t2= (TextView) row.findViewById(R.id.textView2);
 			t3= (TextView) row.findViewById(R.id.textView3);
