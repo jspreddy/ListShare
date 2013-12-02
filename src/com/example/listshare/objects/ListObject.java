@@ -1,0 +1,21 @@
+package com.example.listshare.objects;
+
+import com.parse.*;
+
+@ParseClassName("List")
+public class ListObject extends ParseObject{
+	
+	public ListObject(){}
+	
+	public String getName(){
+		return getString("list_name");
+	}
+	
+	public String getId(){
+		return getObjectId();
+	}
+	
+	public static ParseQuery<ListObject> getQuery() {
+		return ParseQuery.getQuery(ListObject.class);
+	}
+}
