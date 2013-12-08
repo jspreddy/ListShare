@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +45,7 @@ public class ViewListActivity extends Activity {
 	ProgressDialog pdMain;
 	ArrayList<Items> listofItem;
 	ListObject listObject;
+	ListItemsObject currentObject;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,18 +63,58 @@ public class ViewListActivity extends Activity {
 		listofItem=new ArrayList<Items>();
 		
 		listView = (ListView) findViewById(R.id.listView1);
-		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		
+		
+		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
+			public boolean onItemLongClick(AdapterView<?> arg0, View v,
+					int index, long arg3) {
 				i = new Intent(ViewListActivity.this, AddItemActivity.class);
 				i.putExtra("ListId", listId);
 				i.putExtra("flag", 2);
-				i.putExtra("ItemId", listofItem.get(arg2).getId());
-				startActivityForResult(i,0);
+				i.putExtra("ItemId", listofItem.get(index).getId());
+				startActivityForResult(i, 0);
+				return false;
 			}
 		});
+
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View v, int index,
+					long arg3) {
+
+				ParseQuery<ListItemsObject> query = ListItemsObject.getQuery();
+				String id = listofItem.get(index).getId();
+				if (id != null) {
+					query.getInBackground(id,
+							new GetCallback<ListItemsObject>() {
+								public void done(ListItemsObject object,
+										ParseException e) {
+									if (e == null) {
+										if(object.getState() == 0){
+											object.setState(1);
+											object.saveInBackground();											
+										} else if (object.getState() == 1) {
+											object.setState(0);
+											object.saveInBackground();
+										}
+										currentObject = object;
+									} else {
+										Log.d("DEBUG", e.toString());
+									}
+								}
+							});
+					if (currentObject != null && currentObject.getState() == 0) {
+						v.setBackgroundColor(Color.GRAY);
+					} else if (currentObject != null && currentObject.getState() == 1) {
+						v.setBackgroundColor(Color.WHITE);
+					}
+				}
+			}
+		});
+
 
 		DisplayListContents();
 
@@ -123,7 +165,7 @@ public class ViewListActivity extends Activity {
 						Double qty = obj.getQuantity();
 						int count = obj.getCount();
 						Log.d("DEBUG","test");
-						listofItem.add(new Items(obj.getId(),obj.getName(),editedBy.getUsername(),obj.getUnit(),obj.getQuantity(),obj.getCount()));
+						listofItem.add(new Items(obj.getId(),obj.getName(),editedBy.getUsername(),obj.getUnit(),obj.getQuantity(),obj.getCount(),obj.getState()));
 					}
 					
 					pdMain.dismiss();
@@ -183,6 +225,11 @@ public class ViewListActivity extends Activity {
 			holder.t3.setText(""+item.getQuantity());
 			holder.t4.setText(item.getUnit());
 			holder.t5.setText(item.getEditedBy());
+			if (item.getState() == 1) {
+				 row.setBackgroundColor(Color.GRAY);
+			}else if (item.getState() == 0) {
+				 row.setBackgroundColor(Color.WHITE);
+			}
 			return row;
 			
 		}

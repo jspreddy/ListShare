@@ -28,6 +28,10 @@ public class ListItemsObject extends ParseObject{
 		return getInt("count");
 	}
 
+	public int getState() {
+		return getInt("done");
+	}
+
 	public ParseUser getUser(){
 		return getParseUser("editedBy");
 	}
@@ -55,7 +59,11 @@ public class ListItemsObject extends ParseObject{
 	public void setList(ListObject list){
 		put("ListId_fk",list );
 	}
-	
+
+	public void setState(int val) {
+		put("done", val);
+	}
+
 	public static ParseQuery<ListItemsObject> getQuery() {
 		return ParseQuery.getQuery(ListItemsObject.class);
 	}

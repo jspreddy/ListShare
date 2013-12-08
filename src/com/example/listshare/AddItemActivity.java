@@ -9,6 +9,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,6 +41,7 @@ public class AddItemActivity extends Activity {
 	TextView t;
 	ArrayAdapter<String> adapter;
 	Boolean itemModification = false;
+	ProgressDialog pdMain;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,11 @@ public class AddItemActivity extends Activity {
 		}
 
 		if (flag == 2) {
+			pdMain=new ProgressDialog(AddItemActivity.this);
+			pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			pdMain.setCancelable(false);
+			pdMain.setMessage("Loading Item details");
+			pdMain.show();
 			ParseQuery<ListItemsObject> query = ListItemsObject.getQuery();
 			query.include("editedBy");
 			query.getInBackground(itemId, new GetCallback<ListItemsObject>() {
@@ -81,6 +88,7 @@ public class AddItemActivity extends Activity {
 						int position = adapter.getPosition(unit);
 						spinner.setSelection(position);
 						t.setText(object.getUser().getUsername());
+						pdMain.dismiss();
 					} else {
 						Log.d("DEBUG", e.toString());
 						// something went wrong
@@ -182,6 +190,7 @@ public class AddItemActivity extends Activity {
 			item.setCount(count);
 			item.setUser(user);
 			item.setList(lo);
+			item.setState(0);
 			item.saveInBackground();
 			itemModification = true;
 

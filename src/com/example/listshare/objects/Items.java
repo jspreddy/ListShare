@@ -4,15 +4,16 @@ public class Items {
 
 	String name, editedBy, unit,id ;
 	double quantity;
-	int count;
+	int count, state;
 	
-	public Items(String id, String name, String editedBy, String unit, double quantity, int count) {
+	public Items(String id, String name, String editedBy, String unit, double quantity, int count, int state) {
 		this.id = id;
 		this.name = name;
 		this.editedBy = editedBy;
 		this.unit = unit;
 		this.quantity = quantity;
 		this.count = count;
+		this.state = state;
 	}
 
 	public String getId() {
@@ -39,6 +40,8 @@ public class Items {
 		return count;
 	}
 	
-	
+	public int getState() {
+		return state;
+	}
 
 }
