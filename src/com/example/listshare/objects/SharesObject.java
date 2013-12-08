@@ -11,6 +11,10 @@ public class SharesObject extends ParseObject{
 		return getObjectId();
 	}
 	
+	public String getSharedWithUsername(){
+		return getParseUser("UserId_fk").getUsername();
+	}
+	
 	public static ParseQuery<SharesObject> getQuery() {
 		return ParseQuery.getQuery(SharesObject.class);
 	}

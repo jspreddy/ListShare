@@ -3,9 +3,12 @@ package com.example.listshare;
 import com.example.listshare.objects.ListObject;
 import com.example.listshare.objects.SharesObject;
 import com.parse.CountCallback;
+import com.parse.DeleteCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -20,8 +23,10 @@ import android.text.InputType;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +41,9 @@ public class EditListDetailsActivity extends Activity {
 	ParseUser shareWithUser;
 	ProgressDialog pdMain;
 	Boolean nameChanged = false;
+	ListView lvSharesList;
+	ParseQueryAdapter<SharesObject> sharesListadapter;
+	ParseQueryAdapter.QueryFactory<SharesObject> sharesListFactory; 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +55,9 @@ public class EditListDetailsActivity extends Activity {
 		currentUser = ParseUser.getCurrentUser();
 		pdMain=new ProgressDialog(EditListDetailsActivity.this);
 		
-		
 		tvEditListName = (TextView) findViewById(R.id.btnEditListName);
 		btnAddShare = (Button) findViewById(R.id.btnAddShare);
+		lvSharesList = (ListView) findViewById(R.id.lvSharesList);
 		
 		//Edit existing list.
 		if(list_id!=null)
@@ -67,10 +75,24 @@ public class EditListDetailsActivity extends Activity {
 					if(e==null && arg0!=null){
 						listObject = arg0;
 						tvEditListName.setText(listObject.getName());
+						
+						sharesListFactory = new ParseQueryAdapter.QueryFactory<SharesObject>() {
+							@Override
+							public ParseQuery<SharesObject> create() {
+								ParseQuery<SharesObject> sharesQuery = SharesObject.getQuery();
+								sharesQuery.whereEqualTo("ListId_fk", listObject);
+								sharesQuery.include("UserId_fk");
+								return sharesQuery;
+							}
+						};
+						
+						loadSharesData();
+						
 						ParseUser createdBy =listObject.getParseUser("createdBy"); 
 						if(createdBy.getObjectId().equals(currentUser.getObjectId())){
 							tvEditListName.setOnClickListener(new EditListNameListner());
 							btnAddShare.setOnClickListener(new ShareButtonListner());
+							lvSharesList.setOnItemLongClickListener(new SharesListItemLongClockListener());
 						}
 						else{
 							ViewGroup parentView_btnAddShare = (ViewGroup) btnAddShare.getParent();
@@ -81,7 +103,7 @@ public class EditListDetailsActivity extends Activity {
 							tvEditListName.setOnClickListener(new OnClickListener() {
 								@Override
 								public void onClick(View v) {
-									Toast.makeText(getApplicationContext(), "You don't own this list. You can't change it.", Toast.LENGTH_SHORT).show();
+									Toast.makeText(EditListDetailsActivity.this, "You don't own this list. You can't change it.", Toast.LENGTH_SHORT).show();
 								}
 							});
 						}
@@ -98,6 +120,24 @@ public class EditListDetailsActivity extends Activity {
 			tvEditListName.setOnClickListener(new AddListNameListener());
 			btnAddShare.setOnClickListener(new ShareButtonListner());
 		}
+		
+		
+	}
+	
+	public void loadSharesData(){
+		sharesListadapter = new ParseQueryAdapter<SharesObject>(EditListDetailsActivity.this, sharesListFactory){
+			@Override
+			public View getItemView(SharesObject object, View v, ViewGroup parent) {
+				
+				if (v == null) {
+					v = View.inflate(getBaseContext(), R.layout.share_list_item, null);
+				}
+				TextView descriptionView = (TextView) v.findViewById(R.id.tvSharedWithUserName);
+				descriptionView.setText(object.getSharedWithUsername());
+				return v;
+			}
+		};
+		lvSharesList.setAdapter(sharesListadapter);
 	}
 
 	@Override
@@ -122,8 +162,9 @@ public class EditListDetailsActivity extends Activity {
 				// Set an EditText view to get user input
 				final EditText input = new EditText(EditListDetailsActivity.this);
 				input.setInputType(InputType.TYPE_CLASS_TEXT);
+				
 				alert.setView(input);
-
+				
 				alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						String uname = input.getText().toString();
@@ -165,6 +206,7 @@ public class EditListDetailsActivity extends Activity {
 															if(e==null){
 																//TODO: display the list.
 																Toast.makeText(EditListDetailsActivity.this, "List has been shared.", Toast.LENGTH_SHORT).show();
+																loadSharesData();
 															}
 															else{
 																Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
@@ -202,6 +244,7 @@ public class EditListDetailsActivity extends Activity {
 				});
 
 				alert.show();
+				
 			}
 			else{
 				Toast.makeText(EditListDetailsActivity.this, "You can only share an existing list.", Toast.LENGTH_SHORT).show();
@@ -308,6 +351,43 @@ public class EditListDetailsActivity extends Activity {
 			});
 
 			alert.show();
+		}
+	}
+
+	class SharesListItemLongClockListener implements AdapterView.OnItemLongClickListener {
+		SharesObject item;
+		@Override
+		public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+			item = sharesListadapter.getItem(position);
+			
+			AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
+			alert.setTitle("Revoke share from: "+item.getSharedWithUsername()+" ?");
+			
+			alert.setPositiveButton("Revoke", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					item.deleteInBackground(new DeleteCallback(){
+						@Override
+						public void done(ParseException arg0) {
+							if(arg0==null){
+								loadSharesData();
+								sharesListadapter.notifyDataSetChanged();
+								Toast.makeText(EditListDetailsActivity.this, "Removed successfully", Toast.LENGTH_SHORT).show();
+							}
+							else{
+								Toast.makeText(EditListDetailsActivity.this, "Error. Refresh and try again.", Toast.LENGTH_SHORT).show();
+							}
+						}
+				    });
+				}
+			});
+
+			alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {}
+			});
+
+			alert.show();
+
+			return true;
 		}
 	}
 }
