@@ -50,7 +50,6 @@ public class MainActivity extends Activity {
 			finish();
 		}
 		
-		//TODO: use AccountManager to store credentials?
 		
 		t1 = (EditText) findViewById(R.id.editText1);
 		t2 = (EditText) findViewById(R.id.editText2);

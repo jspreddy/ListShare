@@ -20,6 +20,10 @@
     <string name="Save">Save</string>
     <string name="Add">Add</string>
     <string name="Share">Share</string>
+    <string name="unit">Unit</string>
+    <string name="qty">Quantitity</string>
+    <string name="count">Count</string>
+    <string name="last_edit_by">Last edited by: </string>
     
     <string name="tvEnterListName">List Name:</string>
     <string name="tvChangeSharedWith">Shared With:</string>

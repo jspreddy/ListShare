@@ -112,9 +112,7 @@ public class SignUpActivity extends Activity {
 								startActivity(i);
 								finish();
 							} else {
-								Log.d("DEBUG", "Sign up didn't succeed. Look at the ParseException to figure out what went wrong");
-								Toast.makeText(SignUpActivity.this, "Signup failed", Toast.LENGTH_SHORT).show();
-								Toast.makeText(SignUpActivity.this, ""+e, Toast.LENGTH_SHORT).show();
+								Toast.makeText(SignUpActivity.this, "Failure: "+e.getMessage(), Toast.LENGTH_LONG).show();
 							}
 						}
 					});

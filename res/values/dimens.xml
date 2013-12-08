@@ -8,5 +8,6 @@
     <dimen name="item_vert_margin">8dp</dimen>
     
     <dimen name="padding_large">15dp</dimen>
+    <dimen name="padding_seperator">4dp</dimen>
     
 </resources>

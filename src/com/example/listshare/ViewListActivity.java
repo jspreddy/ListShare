@@ -13,8 +13,10 @@ import com.example.listshare.objects.SharesObject;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -46,13 +48,15 @@ public class ViewListActivity extends Activity {
 	ProgressDialog pdMain;
 	ArrayList<Items> listofItem;
 	ListObject listObject;
-	ListItemsObject currentObject;
-
+	int mainColor;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_list);
 
+		mainColor=Color.parseColor("#FF8800");
+		
 		if(getIntent().getExtras()!= null){
 			listId = getIntent().getExtras().getString("list_id");
 		}
@@ -65,66 +69,77 @@ public class ViewListActivity extends Activity {
 		
 		listView = (ListView) findViewById(R.id.listView1);
 		
-		
-		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+		ParseQuery<ListObject> listQuery = ListObject.getQuery();
+		listQuery.include("createdBy");
+		listQuery.getInBackground(listId, new GetCallback<ListObject>(){
 
 			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View v,
-					int index, long arg3) {
+			public void done(ListObject arg0, ParseException arg1) {
+				if(arg0!=null && arg1==null){
+					listObject = arg0;
+					DisplayListContents();
+				}
+				
+			}
+		});
+		
+		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View v, int index, long arg3) {
+				//TODO: ask for edit or delete.
 				i = new Intent(ViewListActivity.this, AddItemActivity.class);
 				i.putExtra("ListId", listId);
 				i.putExtra("flag", 2);
 				i.putExtra("ItemId", listofItem.get(index).getId());
 				startActivityForResult(i, 0);
-				return false;
+				return true;
 			}
 		});
 
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View v, int index,
-					long arg3) {
-
+			public void onItemClick(AdapterView<?> arg0, final View v, int index, long arg3) {
+				v.setBackgroundColor(Color.parseColor("#d0d0d0"));
 				ParseQuery<ListItemsObject> query = ListItemsObject.getQuery();
 				String id = listofItem.get(index).getId();
 				if (id != null) {
-					query.getInBackground(id,
-							new GetCallback<ListItemsObject>() {
-								public void done(ListItemsObject object,
-										ParseException e) {
-									if (e == null) {
-										if(object.getState() == 0){
-											object.setState(1);
-											object.saveInBackground();											
-										} else if (object.getState() == 1) {
-											object.setState(0);
-											object.saveInBackground();
+					query.getInBackground(id, new GetCallback<ListItemsObject>() {
+						public void done(ListItemsObject object, ParseException e) {
+							if (e == null) {
+								if(object.getState() == 0){
+									object.setState(1);
+									object.saveInBackground(new SaveCallback(){
+										@Override
+										public void done(ParseException arg0) {
+											if(arg0==null)
+												v.setBackgroundColor(mainColor);
 										}
-										currentObject = object;
-									} else {
-										Log.d("DEBUG", e.toString());
-									}
+									});
+								} else if (object.getState() == 1) {
+									object.setState(0);
+									object.saveInBackground(new SaveCallback(){
+										@Override
+										public void done(ParseException arg0) {
+											if(arg0==null)
+												v.setBackgroundColor(Color.WHITE);
+										}
+									});
 								}
-							});
-					if (currentObject != null && currentObject.getState() == 0) {
-						v.setBackgroundColor(Color.GRAY);
-					} else if (currentObject != null && currentObject.getState() == 1) {
-						v.setBackgroundColor(Color.WHITE);
-					}
+							} else {
+								
+							}
+						}
+					});
 				}
 			}
 		});
 
-
-		DisplayListContents();
 
 		b = (Button)findViewById(R.id.button1);
 		b.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				Intent i = new Intent(ViewListActivity.this, AddItemActivity.class);
 				i.putExtra("ListId", listId);
 				i.putExtra("flag", 1);
@@ -142,32 +157,15 @@ public class ViewListActivity extends Activity {
 		pdMain.show();
 		
 		if (currentUser != null) {
-			
-			
 			ParseQuery<ListItemsObject> itemsQuery = ListItemsObject.getQuery();
-			itemsQuery.include("editedBy");
-			ListObject lo = new ListObject();
-			lo.setObjectId(listId);
-			try {
-				lo.fetch();
-			} catch (ParseException e2) {
-				e2.printStackTrace();
-			}
-			itemsQuery.whereEqualTo("ListId_fk", lo);
-			
+			itemsQuery.include("editedBy");			
+			itemsQuery.whereEqualTo("ListId_fk", listObject);
 			itemsQuery.findInBackground(new FindCallback<ListItemsObject>() {
 				
 				@Override
 				public void done(List<ListItemsObject> item, ParseException e) {
 					for(ListItemsObject obj : item){
-						String id=obj.getId();
-						String name = obj.getName();
 						ParseUser editedBy = obj.getParseUser("editedBy");
-						String username = editedBy.getUsername();
-						String unit = obj.getUnit();
-						Double qty = obj.getQuantity();
-						int count = obj.getCount();
-						Log.d("DEBUG","test");
 						listofItem.add(new Items(obj.getId(),obj.getName(),editedBy.getUsername(),obj.getUnit(),obj.getQuantity(),obj.getCount(),obj.getState()));
 					}
 					
@@ -182,7 +180,6 @@ public class ViewListActivity extends Activity {
 				}
 			});
 		} else {
-			Log.d("DEBUG", "No user logged in");
 			i = new Intent(ViewListActivity.this, MainActivity.class);
 			finish();
 			startActivity(i);
@@ -229,7 +226,7 @@ public class ViewListActivity extends Activity {
 			holder.t4.setText(item.getUnit());
 			holder.t5.setText(item.getEditedBy());
 			if (item.getState() == 1) {
-				 row.setBackgroundColor(Color.GRAY);
+				 row.setBackgroundColor(mainColor);
 			}else if (item.getState() == 0) {
 				 row.setBackgroundColor(Color.WHITE);
 			}

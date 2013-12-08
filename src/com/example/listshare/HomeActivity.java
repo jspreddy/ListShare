@@ -66,6 +66,7 @@ public class HomeActivity extends Activity {
 
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				//TODO: ask for edit or delete?
 				Intent i = new Intent(HomeActivity.this,EditListDetailsActivity.class);
 				i.putExtra("list_id", listOfList.get(arg2).getId());
 				startActivityForResult(i,0);

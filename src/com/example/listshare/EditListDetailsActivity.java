@@ -49,7 +49,7 @@ public class EditListDetailsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_list_details);
-
+		
 		Intent intent = getIntent();
 		list_id = intent.getStringExtra("list_id");
 		currentUser = ParseUser.getCurrentUser();
@@ -204,7 +204,6 @@ public class EditListDetailsActivity extends Activity {
 														public void done(ParseException e) {
 															pdMain.dismiss();
 															if(e==null){
-																//TODO: display the list.
 																Toast.makeText(EditListDetailsActivity.this, "List has been shared.", Toast.LENGTH_SHORT).show();
 																loadSharesData();
 															}
@@ -263,6 +262,7 @@ public class EditListDetailsActivity extends Activity {
 			// Set an EditText view to get user input
 			final EditText input = new EditText(EditListDetailsActivity.this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+			input.setText(listObject.getName());
 			alert.setView(input);
 
 			alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {

@@ -7,6 +7,8 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -53,12 +55,10 @@ public class AddItemActivity extends Activity {
 		b1 = (Button) findViewById(R.id.button1);
 		b2 = (Button) findViewById(R.id.button2);
 		t = (TextView) findViewById(R.id.textView6);
-		t.setText(ParseUser.getCurrentUser().getUsername());
 
-		values = new String[] { "liter", "pound", "lb", "OZ", "grams" };
+		values = new String[] { "", "Liter", "pound", "lb", "OZ", "Grams", "KG", "qty", "ct. pk." };
 		spinner = (Spinner) findViewById(R.id.spinner1);
-		adapter = new ArrayAdapter<String>(AddItemActivity.this,
-				android.R.layout.simple_spinner_item, values);
+		adapter = new ArrayAdapter<String>(AddItemActivity.this, android.R.layout.simple_spinner_item, values);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
 
@@ -90,17 +90,16 @@ public class AddItemActivity extends Activity {
 						t.setText(object.getUser().getUsername());
 						pdMain.dismiss();
 					} else {
-						Log.d("DEBUG", e.toString());
-						// something went wrong
+						Toast.makeText(getApplicationContext(), "Error. Try again.", Toast.LENGTH_SHORT).show();
+						finish();
 					}
 				}
 			});
-			}
+		}
 
 		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				// TODO Auto-generated method stub
 			}
 			@Override
@@ -111,13 +110,11 @@ public class AddItemActivity extends Activity {
 
 		t1.addTextChangedListener(new TextWatcher() {
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				isEmpty(t1);
 			}
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 				// TODO Auto-generated method stub
 			}
 			@Override
@@ -149,12 +146,18 @@ public class AddItemActivity extends Activity {
 			et.setError("This cannot be empty.");
 			return true;
 		}
-		//et.setError(null);
+		et.setError(null);
 		return false;
 	}
 
 	private void executeQuery() {
 		// get all values
+		pdMain=new ProgressDialog(AddItemActivity.this);
+		pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		pdMain.setCancelable(false);
+		pdMain.setMessage("Saving");
+		pdMain.show();
+		
 		name = t1.getText().toString();
 		Log.d("DEBUG", "double "+t2.getText().toString());
 		if(t2.getText().toString().equals("") ||t2.getText().toString().equals(null)){
@@ -162,12 +165,13 @@ public class AddItemActivity extends Activity {
 			unit = "";
 		}else{
 			quantity = Double.parseDouble(t2.getText().toString());
-			unit = spinner.getSelectedItem().toString();						
+			unit = spinner.getSelectedItem().toString();
 		}
 		count = Integer.parseInt(t3.getText().toString());
 		user = ParseUser.getCurrentUser();
 		ListObject lo = new ListObject();
 		lo.setObjectId(listId);
+		
 		try {
 			lo.fetch();
 		} catch (ParseException e2) {
@@ -184,7 +188,17 @@ public class AddItemActivity extends Activity {
 			item.setUser(user);
 			item.setList(lo);
 			item.setState(0);
-			item.saveInBackground();
+			item.saveInBackground(new SaveCallback(){
+				@Override
+				public void done(ParseException arg0) {
+					if(arg0==null){
+						onBackPressed();
+					}
+					else{
+						Toast.makeText(getApplicationContext(), "Error. Try Saving again.", Toast.LENGTH_SHORT).show();
+					}
+				}
+			});
 			itemModification = true;
 
 		} else if (flag == 2) {
@@ -194,10 +208,19 @@ public class AddItemActivity extends Activity {
 			currentItem.setUnit(unit);
 			currentItem.setCount(count);
 			currentItem.setUser(user);
-			currentItem.saveInBackground();
+			currentItem.saveInBackground(new SaveCallback(){
+				@Override
+				public void done(ParseException arg0) {
+					if(arg0==null){
+						onBackPressed();
+					}
+					else{
+						Toast.makeText(getApplicationContext(), "Error. Try Saving again.", Toast.LENGTH_SHORT).show();
+					}
+				}
+			});
 			itemModification = true;
 		}
-		onBackPressed();
 	}
 
 	@Override
