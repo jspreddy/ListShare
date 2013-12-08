@@ -143,13 +143,6 @@ public class AddItemActivity extends Activity {
 		});
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.add_item, menu);
-		return true;
-	}
-
 	public boolean isEmpty(EditText et) {
 		String text = et.getText().toString();
 		if (text.isEmpty()) {

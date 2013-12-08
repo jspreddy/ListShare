@@ -3,6 +3,8 @@
 
     <string name="app_name">ListShare</string>
     <string name="action_settings">Settings</string>
+    <string name="action_logout">Logout</string>
+    
     <string name="hello_world">Hello world!</string>
     
     <string name="title_activity_home">ListShare: MyLists</string>
@@ -17,6 +19,7 @@
     <string name="Owner">Owner: </string>
     <string name="Save">Save</string>
     <string name="Add">Add</string>
+    <string name="Share">Share</string>
     
     <string name="tvEnterListName">List Name:</string>
     <string name="tvChangeSharedWith">Shared With:</string>
