@@ -14,17 +14,14 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/tvEnterListName" />
-
-        <Button
             android:id="@+id/btnEditListName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:text="" />
+            android:background="#FF8800"
+            android:textColor="#FFFFFF"
+            android:padding="@dimen/padding_large"
+            />
 
     </LinearLayout>
 
@@ -43,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:text="@string/Add" />
+            android:text="@string/Share" />
 
     </LinearLayout>
 

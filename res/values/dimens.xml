@@ -7,4 +7,6 @@
     <dimen name="item_horz_margin">16dp</dimen>
     <dimen name="item_vert_margin">8dp</dimen>
     
+    <dimen name="padding_large">15dp</dimen>
+    
 </resources>
