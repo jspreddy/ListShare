@@ -1,5 +1,6 @@
 package com.example.listshare;
 
+import com.example.listshare.objects.ListItemsObject;
 import com.example.listshare.objects.ListObject;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -28,14 +29,17 @@ public class AddItemActivity extends Activity {
 
 	EditText t1, t2, t3;
 	Button b1, b2;
-	String name, quantity, count, unit, listId, itemId;
-	ParseObject currentItem, listObject;
+	String name, unit, listId, itemId;
+	double quantity;
+	int count;
+	ListItemsObject currentItem;
 	Spinner spinner;
 	String[] values;
 	int flag;
 	ParseUser user;
 	TextView t;
 	ArrayAdapter<String> adapter;
+	Boolean itemModification = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,7 @@ public class AddItemActivity extends Activity {
 		b1 = (Button) findViewById(R.id.button1);
 		b2 = (Button) findViewById(R.id.button2);
 		t = (TextView) findViewById(R.id.textView6);
+		t.setText(ParseUser.getCurrentUser().getUsername());
 
 		values = new String[] { "liter", "pound", "lb", "OZ", "grams" };
 		spinner = (Spinner) findViewById(R.id.spinner1);
@@ -62,24 +67,27 @@ public class AddItemActivity extends Activity {
 		}
 
 		if (flag == 2) {
-/*			ParseQuery<ParseObject> query = ParseQuery.getQuery("ListItems");
-			query.getInBackground(itemId, new GetCallback<ParseObject>() {
-				public void done(ParseObject object, ParseException e) {
+			ParseQuery<ListItemsObject> query = ListItemsObject.getQuery();
+			query.include("editedBy");
+			query.getInBackground(itemId, new GetCallback<ListItemsObject>() {
+				public void done(ListItemsObject object, ParseException e) {
 					if (e == null) {
 						currentItem = object;
-						t1.setText(object.getString("item_name"));
-						t2.setText(object.getString("quantity"));
-						t3.setText(object.getString("count"));
-						unit = object.getString("units");
+						Log.d("DEBUG", object.getName());
+						t1.setText(object.getName());
+						t2.setText(Double.toString(object.getQuantity()));
+						t3.setText(Integer.toString(object.getCount()));
+						unit = object.getUnit();
 						int position = adapter.getPosition(unit);
 						spinner.setSelection(position);
-						t.setText(object.getParseUser("editedBy").getUsername());
+						t.setText(object.getUser().getUsername());
 					} else {
+						Log.d("DEBUG", e.toString());
 						// something went wrong
 					}
 				}
 			});
-*/		}
+			}
 
 		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
@@ -140,50 +148,63 @@ public class AddItemActivity extends Activity {
 			et.setError("This cannot be empty.");
 			return true;
 		}
-		et.setError(null);
+		//et.setError(null);
 		return false;
 	}
 
 	private void executeQuery() {
 		// get all values
 		name = t1.getText().toString();
-		quantity = t2.getText().toString();
-		count = t3.getText().toString();
-		unit = spinner.getSelectedItem().toString();
+		Log.d("DEBUG", "double "+t2.getText().toString());
+		if(t2.getText().toString().equals("") ||t2.getText().toString().equals(null)){
+			quantity = 0;
+			unit = "";
+		}else{
+			quantity = Double.parseDouble(t2.getText().toString());
+			unit = spinner.getSelectedItem().toString();						
+		}
+		count = Integer.parseInt(t3.getText().toString());
 		user = ParseUser.getCurrentUser();
-/*		ListObject lo = new ListObject();
+		ListObject lo = new ListObject();
 		lo.setObjectId(listId);
 		try {
 			lo.fetch();
 		} catch (ParseException e2) {
 			e2.printStackTrace();
 		}
-*/
+
 		if (flag == 1) {
 			// Insert
-/*			ParseObject item = new ParseObject("ListItems");
-			item.put("quantity", quantity);
-			item.put("units", unit);
-			item.put("count", count);
-			item.put("item_name", name);
-			item.put("ListId_fk", lo);
-			item.put("editedBy", user);
+			ListItemsObject item = new ListItemsObject();
+			item.setName(name);
+			item.setQuantity(quantity);
+			item.setUnit(unit);
+			item.setCount(count);
+			item.setUser(user);
+			item.setList(lo);
 			item.saveInBackground();
-*/
+			itemModification = true;
+
 		} else if (flag == 2) {
 			//update
-/*			currentItem.put("quantity", quantity);
-			currentItem.put("units", unit);
-			currentItem.put("count", count);
-			currentItem.put("item_name", name);
-			currentItem.put("editedBy", user);
+			currentItem.setName(name);
+			currentItem.setQuantity(quantity);
+			currentItem.setUnit(unit);
+			currentItem.setCount(count);
+			currentItem.setUser(user);
 			currentItem.saveInBackground();
-*/		}
+			itemModification = true;
+		}
 		onBackPressed();
 	}
 
 	@Override
 	public void onBackPressed() {
+		if(itemModification==true){
+			Intent i = new Intent();
+			i.putExtra("itemModification", true);
+			setResult(RESULT_OK, i);
+		}
 		finish();
 		super.onBackPressed();
 	}

@@ -1,6 +1,7 @@
 package com.example.listshare.objects;
 
 import com.parse.*;
+import com.parse.ParseFacebookUtils.Permissions.User;
 
 @ParseClassName("ListItems")
 public class ListItemsObject extends ParseObject{
@@ -27,8 +28,36 @@ public class ListItemsObject extends ParseObject{
 		return getInt("count");
 	}
 
+	public ParseUser getUser(){
+		return getParseUser("editedBy");
+	}
+	
+	public void setName(String val) {
+		put("item_name", val);
+	}
+
+	public void setUnit(String val) {
+		put("units", val);
+	}
+
+	public void setQuantity(double val) {
+		put("quantity", val);
+	}
+
+	public void setCount(int val) {
+		put("count", val);
+	}
+
+	public void setUser(ParseUser user) {
+		put("editedBy", user);
+	}
+
+	public void setList(ListObject list){
+		put("ListId_fk",list );
+	}
 	
 	public static ParseQuery<ListItemsObject> getQuery() {
 		return ParseQuery.getQuery(ListItemsObject.class);
 	}
+
 }

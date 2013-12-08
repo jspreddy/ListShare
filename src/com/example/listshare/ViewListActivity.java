@@ -70,7 +70,7 @@ public class ViewListActivity extends Activity {
 				i.putExtra("ListId", listId);
 				i.putExtra("flag", 2);
 				i.putExtra("ItemId", listofItem.get(arg2).getId());
-				startActivity(i);
+				startActivityForResult(i,0);
 			}
 		});
 
@@ -86,20 +86,19 @@ public class ViewListActivity extends Activity {
 				i.putExtra("ListId", listId);
 				i.putExtra("flag", 1);
 				i.putExtra("ItemId","");
-				startActivity(i);
+				startActivityForResult(i,0);
 			}
 		});
 	}
 
 	private void DisplayListContents() {
+		listofItem.clear();
 		pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		pdMain.setCancelable(false);
 		pdMain.setMessage("Loading List");
 		pdMain.show();
 		
-		if (currentUser != null) {
-			
-			
+		if (currentUser != null) {	
 			ParseQuery<ListItemsObject> itemsQuery = ListItemsObject.getQuery();
 			itemsQuery.include("editedBy");
 			ListObject lo = new ListObject();
@@ -187,7 +186,6 @@ public class ViewListActivity extends Activity {
 			return row;
 			
 		}
-
 	}
 	
 	class ListItemViewHolder{
@@ -201,5 +199,16 @@ public class ViewListActivity extends Activity {
 			t5= (TextView) row.findViewById(R.id.textView5);
 		}
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		if(requestCode==0 && resultCode==RESULT_OK){
+			Boolean itemModification = data.getBooleanExtra("itemModification", false);
+			if(itemModification){
+				DisplayListContents();
+			}
+		}
+	}
+
 }
 
