@@ -82,7 +82,8 @@
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Last Edited by " />
+                
+                android:text="@string/last_edit_by" />
 
             <TextView
                 android:id="@+id/textView6"

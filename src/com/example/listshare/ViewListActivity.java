@@ -224,7 +224,7 @@ public class ViewListActivity extends Activity {
 			holder.t2.setText(""+item.getCount());
 			holder.t3.setText(""+item.getQuantity());
 			holder.t4.setText(item.getUnit());
-			holder.t5.setText(item.getEditedBy());
+			holder.t5.setText("Last edited by: "+item.getEditedBy());
 			if (item.getState() == 1) {
 				 row.setBackgroundColor(mainColor);
 			}else if (item.getState() == 0) {
