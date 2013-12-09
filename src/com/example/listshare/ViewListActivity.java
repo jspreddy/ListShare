@@ -10,6 +10,7 @@ import com.example.listshare.objects.ListItemsObject;
 import com.example.listshare.objects.ListObject;
 import com.example.listshare.objects.MainList;
 import com.example.listshare.objects.SharesObject;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -107,11 +108,14 @@ public class ViewListActivity extends Activity {
 						query.getInBackground(listofItem.get(listIndex).getId(), new GetCallback<ListItemsObject>() {
 							public void done(ListItemsObject object, ParseException e) {
 								if (e == null) {
-									object.deleteInBackground();
-									DisplayListContents();
+									object.deleteInBackground(new DeleteCallback() {
+										@Override
+										public void done(ParseException arg0) {
+											DisplayListContents();
+										}
+									});
 								} else {
 									Toast.makeText(getApplicationContext(), "Error. Try again.", Toast.LENGTH_SHORT).show();
-									finish();
 								}
 							}
 						});
