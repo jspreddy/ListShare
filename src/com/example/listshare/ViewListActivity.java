@@ -10,6 +10,7 @@ import com.example.listshare.objects.ListItemsObject;
 import com.example.listshare.objects.ListObject;
 import com.example.listshare.objects.MainList;
 import com.example.listshare.objects.SharesObject;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -20,8 +21,10 @@ import com.parse.SaveCallback;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
@@ -48,7 +51,7 @@ public class ViewListActivity extends Activity {
 	ProgressDialog pdMain;
 	ArrayList<Items> listofItem;
 	ListObject listObject;
-	int mainColor;
+	int mainColor,listIndex;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,20 +81,47 @@ public class ViewListActivity extends Activity {
 				if(arg0!=null && arg1==null){
 					listObject = arg0;
 					DisplayListContents();
-				}
-				
+				}	
 			}
 		});
 		
 		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View v, int index, long arg3) {
-				//TODO: ask for edit or delete.
-				i = new Intent(ViewListActivity.this, AddItemActivity.class);
-				i.putExtra("ListId", listId);
-				i.putExtra("flag", 2);
-				i.putExtra("ItemId", listofItem.get(index).getId());
-				startActivityForResult(i, 0);
+				listIndex = index;
+				AlertDialog.Builder alert = new AlertDialog.Builder(ViewListActivity.this);
+				alert.setTitle("Select action you would like to perform");
+				alert.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						i = new Intent(ViewListActivity.this, AddItemActivity.class);
+						i.putExtra("ListId", listId);
+						i.putExtra("flag", 2);
+						i.putExtra("ItemId", listofItem.get(listIndex).getId());
+						startActivityForResult(i, 0);
+					}
+				});
+
+				alert.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						//listofItem.remove(listofItem);
+						ParseQuery<ListItemsObject> query = ListItemsObject.getQuery();						
+						query.getInBackground(listofItem.get(listIndex).getId(), new GetCallback<ListItemsObject>() {
+							public void done(ListItemsObject object, ParseException e) {
+								if (e == null) {
+									object.deleteInBackground(new DeleteCallback() {
+										@Override
+										public void done(ParseException arg0) {
+											DisplayListContents();
+										}
+									});
+								} else {
+									Toast.makeText(getApplicationContext(), "Error. Try again.", Toast.LENGTH_SHORT).show();
+								}
+							}
+						});
+					}
+				});
+				alert.show();
 				return true;
 			}
 		});
