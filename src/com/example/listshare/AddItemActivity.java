@@ -95,7 +95,8 @@ public class AddItemActivity extends Activity {
 					}
 				}
 			});
-		}
+		}else
+			t.setText(ParseUser.getCurrentUser().getUsername());
 
 		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
