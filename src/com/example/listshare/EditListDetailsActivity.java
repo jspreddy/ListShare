@@ -76,16 +76,6 @@ public class EditListDetailsActivity extends Activity {
 						listObject = arg0;
 						tvEditListName.setText(listObject.getName());
 						
-						sharesListFactory = new ParseQueryAdapter.QueryFactory<SharesObject>() {
-							@Override
-							public ParseQuery<SharesObject> create() {
-								ParseQuery<SharesObject> sharesQuery = SharesObject.getQuery();
-								sharesQuery.whereEqualTo("ListId_fk", listObject);
-								sharesQuery.include("UserId_fk");
-								return sharesQuery;
-							}
-						};
-						
 						loadSharesData();
 						
 						ParseUser createdBy =listObject.getParseUser("createdBy"); 
@@ -125,6 +115,16 @@ public class EditListDetailsActivity extends Activity {
 	}
 	
 	public void loadSharesData(){
+		sharesListFactory = new ParseQueryAdapter.QueryFactory<SharesObject>() {
+			@Override
+			public ParseQuery<SharesObject> create() {
+				ParseQuery<SharesObject> sharesQuery = SharesObject.getQuery();
+				sharesQuery.whereEqualTo("ListId_fk", listObject);
+				sharesQuery.include("UserId_fk");
+				return sharesQuery;
+			}
+		};
+		
 		sharesListadapter = new ParseQueryAdapter<SharesObject>(EditListDetailsActivity.this, sharesListFactory){
 			@Override
 			public View getItemView(SharesObject object, View v, ViewGroup parent) {
