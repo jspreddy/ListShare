@@ -200,7 +200,7 @@ public class ViewListActivity extends Activity {
 					}
 					
 					pdMain.dismiss();
-					if(listofItem !=null && listofItem.size() != 0){
+					if(listofItem !=null ){
 						ListItemAdapter adapter = new ListItemAdapter(ViewListActivity.this, listofItem);
 						listView.setAdapter(adapter);
 					}
