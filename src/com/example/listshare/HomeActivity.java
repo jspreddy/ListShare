@@ -40,16 +40,17 @@ public class HomeActivity extends Activity {
 	Button btnAddList;
 	Intent i; 
 	ArrayAdapter<MainList> adapter;
-	ArrayList<MainList> listOfList;
+	ArrayList<MainList> mainList;
 	ProgressDialog pdMain;
 	ParseUser currentUser;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 		currentUser = ParseUser.getCurrentUser();
 		pdMain=new ProgressDialog(HomeActivity.this);
-		listOfList=new ArrayList<MainList>();
+		mainList=new ArrayList<MainList>();
 		
 		lvMainList = (ListView) findViewById(R.id.lvMainList);
 		lvMainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -57,7 +58,7 @@ public class HomeActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				Intent i = new Intent(HomeActivity.this,ViewListActivity.class);
-				i.putExtra("list_id", listOfList.get(arg2).getId());
+				i.putExtra("list_id", mainList.get(arg2).getId());
 				startActivity(i);
 			}
 			
@@ -68,7 +69,7 @@ public class HomeActivity extends Activity {
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				//TODO: ask for edit or delete?
 				Intent i = new Intent(HomeActivity.this,EditListDetailsActivity.class);
-				i.putExtra("list_id", listOfList.get(arg2).getId());
+				i.putExtra("list_id", mainList.get(arg2).getId());
 				startActivityForResult(i,0);
 				return true;
 			}
@@ -91,7 +92,7 @@ public class HomeActivity extends Activity {
 	}
 
 	public void DisplayListContents() {
-		listOfList.clear();
+		mainList.clear();
 		pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		pdMain.setCancelable(false);
 		pdMain.setMessage("Loading List");
@@ -117,7 +118,7 @@ public class HomeActivity extends Activity {
 							} catch (ParseException e) {
 								e.printStackTrace();
 							}
-							listOfList.add( new MainList(listObj.getName(), owner.getUsername(), listObj.getId()) );
+							mainList.add( new MainList(listObj.getName(), owner.getUsername(), listObj.getId()) );
 						}
 					}
 					
@@ -131,13 +132,13 @@ public class HomeActivity extends Activity {
 							if(arg1 == null){
 								for(ListObject obj : arg0){
 									ParseUser user = obj.getParseUser("createdBy");
-									listOfList.add(new MainList(obj.getName(), user.getUsername(), obj.getId()));
+									mainList.add(new MainList(obj.getName(), user.getUsername(), obj.getId()));
 								}
 							}
 							pdMain.dismiss();
 							
-							if(listOfList!=null && listOfList.size() != 0){
-								ListAdapter la = new ListAdapter(HomeActivity.this, listOfList);
+							if(mainList!=null && mainList.size() != 0){
+								ListAdapter la = new ListAdapter(HomeActivity.this, mainList);
 								lvMainList.setAdapter(la);
 							}
 							else{
