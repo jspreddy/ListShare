@@ -28,3 +28,4 @@ proguard/
 *.iws
 .idea/
 gen
+gen/com/example/listshare/R.java
