@@ -20,7 +20,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
-public class MainActivity extends Activity {
+public class LoginActivity extends Activity {
 
 	EditText t1, t2;
 	Button b1, b2;
@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_login);
 		
 		ParseObject.registerSubclass(ListItemsObject.class);
 		ParseObject.registerSubclass(ListObject.class);
@@ -41,8 +41,8 @@ public class MainActivity extends Activity {
 		
 		Parse.initialize(this, "nW4RoU4uXcAd0jZ0yWzqfO0rwAqu8MtSbLdpYw7m", "yd0xuMmvr7ekL0wENpSi5yrbGDYrfCe3oD7ZCoKl");
 		ParseAnalytics.trackAppOpened(getIntent());
-		homeActivity = new Intent(MainActivity.this, HomeActivity.class);
-		signUpActivity = new Intent(MainActivity.this, SignUpActivity.class);
+		homeActivity = new Intent(LoginActivity.this, HomeActivity.class);
+		signUpActivity = new Intent(LoginActivity.this, SignUpActivity.class);
 		
 		ParseUser currentUser = ParseUser.getCurrentUser();
 		if(currentUser != null){
@@ -97,7 +97,7 @@ public class MainActivity extends Activity {
 					startActivity(intent);
 					finish();
 				} else {
-					Toast.makeText(MainActivity.this, "Log in failed. Invalid Credentials", Toast.LENGTH_SHORT).show();
+					Toast.makeText(LoginActivity.this, "Log in failed. Invalid Credentials", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});

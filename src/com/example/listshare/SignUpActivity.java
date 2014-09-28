@@ -108,7 +108,7 @@ public class SignUpActivity extends Activity {
 					user.signUpInBackground(new SignUpCallback() {
 						public void done(ParseException e) {
 							if (e == null) {
-								Intent i = new Intent(SignUpActivity.this, MainActivity.class);
+								Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
 								startActivity(i);
 								finish();
 							} else {

@@ -152,7 +152,7 @@ public class HomeActivity extends Activity {
 			
 		} else {
 			Log.d("DEBUG", "No user loggrd in");
-			i = new Intent(HomeActivity.this, MainActivity.class);
+			i = new Intent(HomeActivity.this, LoginActivity.class);
 			finish();
 			startActivity(i);
 		}
@@ -224,7 +224,7 @@ public class HomeActivity extends Activity {
 		// Handle item selection
 		if (item.getItemId() == R.id.action_logout) {
 			ParseUser.logOut();
-			Intent i = new Intent(HomeActivity.this, MainActivity.class);
+			Intent i = new Intent(HomeActivity.this, LoginActivity.class);
 			startActivity(i);
 			finish();
 		}
