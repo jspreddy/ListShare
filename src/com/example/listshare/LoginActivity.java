@@ -22,13 +22,12 @@ import com.parse.ParseUser;
 
 public class LoginActivity extends Activity {
 
-	EditText t1, t2;
-	Button b1, b2;
-	Intent i;
+	EditText etLoginUsername, etLoginPassword;
+	Button btnLogin, btnSignUp;
 	Intent homeActivity;
 	Intent signUpActivity;
 	String name, password;
-	Boolean error = false;;
+	Boolean error = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,24 +50,24 @@ public class LoginActivity extends Activity {
 		}
 		
 		
-		t1 = (EditText) findViewById(R.id.editText1);
-		t2 = (EditText) findViewById(R.id.editText2);
-		b1 = (Button) findViewById(R.id.button1);
-		b2 = (Button) findViewById(R.id.button2);
-
-		b1.setOnClickListener(new OnClickListener() {
+		etLoginUsername = (EditText) findViewById(R.id.etLoginUsername);
+		etLoginPassword = (EditText) findViewById(R.id.etLoginPassword);
+		btnLogin = (Button) findViewById(R.id.btnLogin);
+		btnSignUp = (Button) findViewById(R.id.btnSignUp);
+		
+		btnLogin.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				try {
-					name = t1.getText().toString();
-					password = t2.getText().toString();
+					name = etLoginUsername.getText().toString();
+					password = etLoginPassword.getText().toString();
 					if (name.isEmpty()) {
-						t1.setError("Name can not be empty.");
+						etLoginUsername.setError("Name can not be empty.");
 						error = true;
 					}
 					if (password.isEmpty()) {
-						t2.setError("Password can not be empty.");
+						etLoginPassword.setError("Password can not be empty.");
 						error = true;
 					}
 				} catch (Exception e) {
@@ -80,7 +79,7 @@ public class LoginActivity extends Activity {
 			}
 		});
 
-		b2.setOnClickListener(new OnClickListener() {
+		btnSignUp.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				startActivity(signUpActivity);
@@ -90,7 +89,7 @@ public class LoginActivity extends Activity {
 		
 	}
 
-	public void login(String username, String pwd, final Intent intent) {
+	private void login(String username, String pwd, final Intent intent) {
 		ParseUser.logInInBackground(username, pwd, new LogInCallback() {
 			public void done(ParseUser user, ParseException e) {
 				if (user != null) {
