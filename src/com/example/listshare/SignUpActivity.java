@@ -34,6 +34,7 @@ public class SignUpActivity extends Activity {
 		etSignUpPassword = (EditText) findViewById(R.id.etSignUpPassword);
 		etSignUpPasswordRetype = (EditText) findViewById(R.id.etSignUpPasswordRetype);
 		btnSignUp = (Button) findViewById(R.id.btnSignUp);
+		btnSignUpToLogin = (Button) findViewById(R.id.btnSignUpToLogin);
 
 		etSignUpUsername.addTextChangedListener(new TextWatcher() {
 
