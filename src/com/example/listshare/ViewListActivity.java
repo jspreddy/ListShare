@@ -210,7 +210,7 @@ public class ViewListActivity extends Activity {
 				}
 			});
 		} else {
-			i = new Intent(ViewListActivity.this, MainActivity.class);
+			i = new Intent(ViewListActivity.this, LoginActivity.class);
 			finish();
 			startActivity(i);
 		}
@@ -281,7 +281,7 @@ public class ViewListActivity extends Activity {
 		// Handle item selection
 		if (item.getItemId() == R.id.action_logout) {
 			ParseUser.logOut();
-			Intent i = new Intent(ViewListActivity.this, MainActivity.class);
+			Intent i = new Intent(ViewListActivity.this, LoginActivity.class);
 			startActivity(i);
 			finish();
 		}
