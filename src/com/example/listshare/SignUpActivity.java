@@ -20,8 +20,8 @@ import android.widget.Toast;
 public class SignUpActivity extends Activity {
 
 	ParseUser user;
-	EditText t1, t2, t3;
-	Button b1, b2;
+	EditText etSignUpUsername, etSignUpPassword, etSignUpPasswordRetype;
+	Button btnSignUp, btnSignUpToLogin;
 
 	Intent i;
 
@@ -30,16 +30,16 @@ public class SignUpActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sign_up);
 
-		t1 = (EditText) findViewById(R.id.editText1);
-		t2 = (EditText) findViewById(R.id.editText2);
-		t3 = (EditText) findViewById(R.id.editText3);
-		b1 = (Button) findViewById(R.id.button1);
+		etSignUpUsername = (EditText) findViewById(R.id.etSignUpUsername);
+		etSignUpPassword = (EditText) findViewById(R.id.etSignUpPassword);
+		etSignUpPasswordRetype = (EditText) findViewById(R.id.etSignUpPasswordRetype);
+		btnSignUp = (Button) findViewById(R.id.btnSignUp);
 
-		t1.addTextChangedListener(new TextWatcher() {
+		etSignUpUsername.addTextChangedListener(new TextWatcher() {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				isEmpty(t1);
+				isEmpty(etSignUpUsername);
 			}
 
 			@Override
@@ -54,11 +54,11 @@ public class SignUpActivity extends Activity {
 			}
 		});
 
-		t2.addTextChangedListener(new TextWatcher() {
+		etSignUpPassword.addTextChangedListener(new TextWatcher() {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				isEmpty(t2);
+				isEmpty(etSignUpPassword);
 			}
 
 			@Override
@@ -73,11 +73,11 @@ public class SignUpActivity extends Activity {
 			}
 		});
 
-		t3.addTextChangedListener(new TextWatcher() {
+		etSignUpPasswordRetype.addTextChangedListener(new TextWatcher() {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				isEmpty(t3);
+				isEmpty(etSignUpPasswordRetype);
 			}
 
 			@Override
@@ -92,14 +92,14 @@ public class SignUpActivity extends Activity {
 			}
 		});
 
-		b1.setOnClickListener(new OnClickListener() {
+		btnSignUp.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				if (!isEmpty(t1) && !isEmpty(t2) && isMatching(t2, t3)) {
+				if (!isEmpty(etSignUpUsername) && !isEmpty(etSignUpPassword) && isMatching(etSignUpPassword, etSignUpPasswordRetype)) {
 					String uname, password;
-					uname = t1.getText().toString();
-					password = t2.getText().toString();
+					uname = etSignUpUsername.getText().toString();
+					password = etSignUpPassword.getText().toString();
 
 					user = new ParseUser();
 					user.setUsername(uname);
@@ -117,6 +117,15 @@ public class SignUpActivity extends Activity {
 						}
 					});
 				}
+			}
+		});
+		
+		btnSignUpToLogin.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
+				startActivity(i);
+				finish();
 			}
 		});
 	}
