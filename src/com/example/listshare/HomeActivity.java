@@ -91,6 +91,31 @@ public class HomeActivity extends Activity {
 		
 	}
 
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		
+		if (currentUser == null)
+		{
+			Log.d("DEBUG", "No user logged in");
+			i = new Intent(HomeActivity.this, LoginActivity.class);
+			finish();
+			startActivity(i);
+			return;
+		}
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+		if(requestCode==0 && resultCode==RESULT_OK){
+			Boolean nameChanged = data.getBooleanExtra("nameChanged", false);
+			if(nameChanged){
+				DisplayListContents();
+			}
+		}
+	}
+	
 	public void DisplayListContents() {
 		mainList.clear();
 		pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -98,67 +123,56 @@ public class HomeActivity extends Activity {
 		pdMain.setMessage("Loading List");
 		pdMain.show();
 		
-		if (currentUser != null) {
-			
-			ParseQuery<SharesObject> sharesQuery = SharesObject.getQuery();
-			
-			sharesQuery.whereEqualTo("UserId_fk", currentUser);
-			sharesQuery.include("UserId_fk");
-			sharesQuery.include("ListId_fk");
-			
-			sharesQuery.findInBackground(new FindCallback<SharesObject>() {
-				@Override
-				public void done(List<SharesObject> arg0, ParseException arg1) {
-					if(arg1 == null){
-						for(SharesObject obj : arg0){
-							ListObject listObj = (ListObject) obj.getParseObject("ListId_fk");
-							ParseUser owner = listObj.getParseUser("createdBy");
-							try {
-								owner.fetchIfNeeded();
-							} catch (ParseException e) {
-								e.printStackTrace();
+		ParseQuery<SharesObject> sharesQuery = SharesObject.getQuery();
+		
+		sharesQuery.whereEqualTo("UserId_fk", currentUser);
+		sharesQuery.include("UserId_fk");
+		sharesQuery.include("ListId_fk");
+		
+		sharesQuery.findInBackground(new FindCallback<SharesObject>() {
+			@Override
+			public void done(List<SharesObject> arg0, ParseException arg1) {
+				if(arg1 == null){
+					for(SharesObject obj : arg0){
+						ListObject listObj = (ListObject) obj.getParseObject("ListId_fk");
+						ParseUser owner = listObj.getParseUser("createdBy");
+						try {
+							owner.fetchIfNeeded();
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+						mainList.add( new MainList(listObj.getName(), owner.getUsername(), listObj.getId()) );
+					}
+				}
+				
+				ParseQuery<ListObject> listQuery = ListObject.getQuery();
+				listQuery.whereEqualTo("createdBy", currentUser);
+				listQuery.include("createdBy");
+				
+				listQuery.findInBackground(new FindCallback<ListObject>(){
+					@Override
+					public void done(List<ListObject> arg0, ParseException arg1) {
+						if(arg1 == null){
+							for(ListObject obj : arg0){
+								ParseUser user = obj.getParseUser("createdBy");
+								mainList.add(new MainList(obj.getName(), user.getUsername(), obj.getId()));
 							}
-							mainList.add( new MainList(listObj.getName(), owner.getUsername(), listObj.getId()) );
+						}
+						pdMain.dismiss();
+						
+						if(mainList!=null && mainList.size() != 0){
+							ListAdapter la = new ListAdapter(HomeActivity.this, mainList);
+							lvMainList.setAdapter(la);
+						}
+						else{
+							Toast.makeText(HomeActivity.this, "Nothing to Show", Toast.LENGTH_SHORT).show();
 						}
 					}
-					
-					ParseQuery<ListObject> listQuery = ListObject.getQuery();
-					listQuery.whereEqualTo("createdBy", currentUser);
-					listQuery.include("createdBy");
-					
-					listQuery.findInBackground(new FindCallback<ListObject>(){
-						@Override
-						public void done(List<ListObject> arg0, ParseException arg1) {
-							if(arg1 == null){
-								for(ListObject obj : arg0){
-									ParseUser user = obj.getParseUser("createdBy");
-									mainList.add(new MainList(obj.getName(), user.getUsername(), obj.getId()));
-								}
-							}
-							pdMain.dismiss();
-							
-							if(mainList!=null && mainList.size() != 0){
-								ListAdapter la = new ListAdapter(HomeActivity.this, mainList);
-								lvMainList.setAdapter(la);
-							}
-							else{
-								Toast.makeText(HomeActivity.this, "Nothing to Show", Toast.LENGTH_SHORT).show();
-							}
-						}
-					});
-					//*/
-				}
-			});
-			
-		} else {
-			Log.d("DEBUG", "No user loggrd in");
-			i = new Intent(HomeActivity.this, LoginActivity.class);
-			finish();
-			startActivity(i);
-		}
-		
+				});
+				//*/
+			}
+		});
 	}
-
 	
 	class ListAdapter extends ArrayAdapter<MainList>{
 		Context context;
@@ -208,17 +222,6 @@ public class HomeActivity extends Activity {
 		getMenuInflater().inflate(R.menu.home, menu);
 		return true;
 	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data){
-		if(requestCode==0 && resultCode==RESULT_OK){
-			Boolean nameChanged = data.getBooleanExtra("nameChanged", false);
-			if(nameChanged){
-				DisplayListContents();
-			}
-		}
-	}
-	
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
