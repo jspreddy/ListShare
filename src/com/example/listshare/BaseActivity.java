@@ -12,6 +12,7 @@ import android.view.MenuItem;
 public class BaseActivity extends Activity {
 	
 	public ParseUser getCurrentUser(){
+		authCheck();
 		return ParseUser.getCurrentUser();
 	}
 	

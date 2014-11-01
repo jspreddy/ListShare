@@ -30,11 +30,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class EditListDetailsActivity extends Activity {
+public class EditListDetailsActivity extends BaseActivity {
 
 	Button btnAddShare;
 	TextView tvEditListName;
-	ParseUser currentUser;
 	
 	String list_id;
 	ListObject listObject;
@@ -52,7 +51,6 @@ public class EditListDetailsActivity extends Activity {
 		
 		Intent intent = getIntent();
 		list_id = intent.getStringExtra("list_id");
-		currentUser = ParseUser.getCurrentUser();
 		pdMain=new ProgressDialog(EditListDetailsActivity.this);
 		
 		tvEditListName = (TextView) findViewById(R.id.btnEditListName);
@@ -78,8 +76,8 @@ public class EditListDetailsActivity extends Activity {
 						
 						loadSharesData();
 						
-						ParseUser createdBy =listObject.getParseUser("createdBy"); 
-						if(createdBy.getObjectId().equals(currentUser.getObjectId())){
+						ParseUser createdBy = listObject.getParseUser("createdBy"); 
+						if(createdBy.getObjectId().equals(getCurrentUser().getObjectId())){
 							tvEditListName.setOnClickListener(new EditListNameListner());
 							btnAddShare.setOnClickListener(new ShareButtonListner());
 							lvSharesList.setOnItemLongClickListener(new SharesListItemLongClockListener());
@@ -169,7 +167,7 @@ public class EditListDetailsActivity extends Activity {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						String uname = input.getText().toString();
 						
-						if(uname.equals(currentUser.getUsername())){
+						if(uname.equals(getCurrentUser().getUsername())){
 							Toast.makeText(EditListDetailsActivity.this, "You can't share your list with yourself.", Toast.LENGTH_LONG).show();
 						}
 						else if(!uname.isEmpty()){
@@ -325,7 +323,7 @@ public class EditListDetailsActivity extends Activity {
 						
 						listObject = new ListObject();
 						listObject.setName(listName);
-						listObject.setUser(currentUser);
+						listObject.setUser(getCurrentUser());
 						listObject.saveInBackground(new SaveCallback(){
 							@Override
 							public void done(ParseException e) {
