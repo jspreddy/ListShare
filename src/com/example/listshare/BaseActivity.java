@@ -10,28 +10,36 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class BaseActivity extends Activity {
-	ParseUser currentUser;
+	
+	public ParseUser getCurrentUser(){
+		return ParseUser.getCurrentUser();
+	}
+	
+	public boolean authCheck() {
+		if (ParseUser.getCurrentUser() == null)
+		{
+			Log.d("DEBUG", "No user logged in");
+			Intent intnt = new Intent(BaseActivity.this, LoginActivity.class);
+			intnt.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			intnt.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			finish();
+			startActivity(intnt);
+			return false;
+		}
+		return true;
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		currentUser = ParseUser.getCurrentUser();
 	}
 	
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
-		
-		if (currentUser == null)
-		{
-			Log.d("DEBUG", "No user logged in");
-			Intent i = new Intent(BaseActivity.this, LoginActivity.class);
-			finish();
-			startActivity(i);
-			return;
-		}
+		authCheck();
 	}
 	
 	@Override
@@ -45,8 +53,10 @@ public class BaseActivity extends Activity {
 		// Handle item selection
 		if (item.getItemId() == R.id.action_logout) {
 			ParseUser.logOut();
-			Intent i = new Intent(BaseActivity.this, LoginActivity.class);
-			startActivity(i);
+			Intent intnt = new Intent(BaseActivity.this, LoginActivity.class);
+			intnt.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			intnt.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intnt);
 			finish();
 		}
 		return true;

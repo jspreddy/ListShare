@@ -34,14 +34,12 @@ public class HomeActivity extends BaseActivity {
 	ArrayAdapter<MainList> adapter;
 	ArrayList<MainList> mainList;
 	ProgressDialog pdMain;
-	ParseUser currentUser;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_home);
-		currentUser = ParseUser.getCurrentUser();
 		pdMain=new ProgressDialog(HomeActivity.this);
 		mainList=new ArrayList<MainList>();
 		
@@ -94,6 +92,11 @@ public class HomeActivity extends BaseActivity {
 		}
 	}
 	
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+	
 	public void DisplayListContents() {
 		mainList.clear();
 		pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -103,7 +106,7 @@ public class HomeActivity extends BaseActivity {
 		
 		ParseQuery<SharesObject> sharesQuery = SharesObject.getQuery();
 		
-		sharesQuery.whereEqualTo("UserId_fk", currentUser);
+		sharesQuery.whereEqualTo("UserId_fk", getCurrentUser());
 		sharesQuery.include("UserId_fk");
 		sharesQuery.include("ListId_fk");
 		
@@ -124,7 +127,7 @@ public class HomeActivity extends BaseActivity {
 				}
 				
 				ParseQuery<ListObject> listQuery = ListObject.getQuery();
-				listQuery.whereEqualTo("createdBy", currentUser);
+				listQuery.whereEqualTo("createdBy", getCurrentUser());
 				listQuery.include("createdBy");
 				
 				listQuery.findInBackground(new FindCallback<ListObject>(){
