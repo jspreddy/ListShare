@@ -12,29 +12,21 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import android.os.Bundle;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class HomeActivity extends Activity {
+public class HomeActivity extends BaseActivity {
 
 	ListView lvMainList;
 	Button btnAddList;
@@ -47,6 +39,7 @@ public class HomeActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_home);
 		currentUser = ParseUser.getCurrentUser();
 		pdMain=new ProgressDialog(HomeActivity.this);
@@ -89,21 +82,6 @@ public class HomeActivity extends Activity {
 			}
 		});
 		
-	}
-
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
-		
-		if (currentUser == null)
-		{
-			Log.d("DEBUG", "No user logged in");
-			i = new Intent(HomeActivity.this, LoginActivity.class);
-			finish();
-			startActivity(i);
-			return;
-		}
 	}
 	
 	@Override
@@ -214,23 +192,5 @@ public class HomeActivity extends Activity {
 			tvTitle = (TextView) row.findViewById(R.id.tvMainTitle);
 			tvOwner = (TextView) row.findViewById(R.id.tvMainOwner);
 		}
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.home, menu);
-		return true;
-	}
-	
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		if (item.getItemId() == R.id.action_logout) {
-			ParseUser.logOut();
-			Intent i = new Intent(HomeActivity.this, LoginActivity.class);
-			startActivity(i);
-			finish();
-		}
-		return true;
 	}
 }
