@@ -59,7 +59,7 @@ public class HomeActivity extends BaseActivity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				//TODO: ask for edit or delete?
-				Intent i = new Intent(HomeActivity.this,EditListDetailsActivity.class);
+				Intent i = new Intent(HomeActivity.this,ListInfoActivity.class);
 				i.putExtra("list_id", mainList.get(arg2).getId());
 				startActivityForResult(i,0);
 				return true;
@@ -75,7 +75,7 @@ public class HomeActivity extends BaseActivity {
 			
 			@Override
 			public void onClick(View v) {
-				i = new Intent(HomeActivity.this,EditListDetailsActivity.class);
+				i = new Intent(HomeActivity.this,ListInfoActivity.class);
 				startActivityForResult(i,0);
 			}
 		});

@@ -30,7 +30,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class EditListDetailsActivity extends BaseActivity {
+public class ListInfoActivity extends BaseActivity {
 
 	Button btnAddShare;
 	TextView tvEditListName;
@@ -47,11 +47,11 @@ public class EditListDetailsActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_edit_list_details);
+		setContentView(R.layout.activity_list_info);
 		
 		Intent intent = getIntent();
 		list_id = intent.getStringExtra("list_id");
-		pdMain=new ProgressDialog(EditListDetailsActivity.this);
+		pdMain=new ProgressDialog(ListInfoActivity.this);
 		
 		tvEditListName = (TextView) findViewById(R.id.btnEditListName);
 		btnAddShare = (Button) findViewById(R.id.btnAddShare);
@@ -106,7 +106,7 @@ public class EditListDetailsActivity extends BaseActivity {
 					tvEditListName.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							Toast.makeText(EditListDetailsActivity.this, "You don't own this list. You can't change it.", Toast.LENGTH_SHORT).show();
+							Toast.makeText(ListInfoActivity.this, "You don't own this list. You can't change it.", Toast.LENGTH_SHORT).show();
 						}
 					});
 				}
@@ -125,7 +125,7 @@ public class EditListDetailsActivity extends BaseActivity {
 			}
 		};
 		
-		sharesListadapter = new ParseQueryAdapter<SharesObject>(EditListDetailsActivity.this, sharesListFactory){
+		sharesListadapter = new ParseQueryAdapter<SharesObject>(ListInfoActivity.this, sharesListFactory){
 			@Override
 			public View getItemView(SharesObject object, View v, ViewGroup parent) {
 				
@@ -154,13 +154,13 @@ public class EditListDetailsActivity extends BaseActivity {
 		@Override
 		public void onClick(View v) {
 			if(listObject != null){
-				AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
+				AlertDialog.Builder alert = new AlertDialog.Builder(ListInfoActivity.this);
 
 				alert.setTitle("Share with User:");
 				alert.setMessage("Enter the username of the person you want to share the list: "+listObject.getName());
 
 				// Set an EditText view to get user input
-				final EditText input = new EditText(EditListDetailsActivity.this);
+				final EditText input = new EditText(ListInfoActivity.this);
 				input.setInputType(InputType.TYPE_CLASS_TEXT);
 				
 				alert.setView(input);
@@ -170,7 +170,7 @@ public class EditListDetailsActivity extends BaseActivity {
 						String uname = input.getText().toString();
 						
 						if(uname.equals(getCurrentUser().getUsername())){
-							Toast.makeText(EditListDetailsActivity.this, "You can't share your list with yourself.", Toast.LENGTH_LONG).show();
+							Toast.makeText(ListInfoActivity.this, "You can't share your list with yourself.", Toast.LENGTH_LONG).show();
 						}
 						else if(!uname.isEmpty()){
 							pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -204,19 +204,19 @@ public class EditListDetailsActivity extends BaseActivity {
 														public void done(ParseException e) {
 															pdMain.dismiss();
 															if(e==null){
-																Toast.makeText(EditListDetailsActivity.this, "List has been shared.", Toast.LENGTH_SHORT).show();
+																Toast.makeText(ListInfoActivity.this, "List has been shared.", Toast.LENGTH_SHORT).show();
 																sharesListadapter.loadObjects();
 																sharesListadapter.notifyDataSetChanged();
 															}
 															else{
-																Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
+																Toast.makeText(ListInfoActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
 															}
 														}
 													});
 												}
 												else{
 													pdMain.dismiss();
-													Toast.makeText(EditListDetailsActivity.this, "You have already shared the list with this user.", Toast.LENGTH_SHORT).show();
+													Toast.makeText(ListInfoActivity.this, "You have already shared the list with this user.", Toast.LENGTH_SHORT).show();
 												}
 											}
 										});
@@ -224,11 +224,11 @@ public class EditListDetailsActivity extends BaseActivity {
 									}
 									else if(arg0==null){
 										pdMain.dismiss();
-										Toast.makeText(EditListDetailsActivity.this, "User doesn't exist.", Toast.LENGTH_LONG).show();
+										Toast.makeText(ListInfoActivity.this, "User doesn't exist.", Toast.LENGTH_LONG).show();
 									}
 									else{
 										pdMain.dismiss();
-										Toast.makeText(EditListDetailsActivity.this, "Error. Try again.", Toast.LENGTH_LONG).show();
+										Toast.makeText(ListInfoActivity.this, "Error. Try again.", Toast.LENGTH_LONG).show();
 									}
 								}
 							});
@@ -247,7 +247,7 @@ public class EditListDetailsActivity extends BaseActivity {
 				
 			}
 			else{
-				Toast.makeText(EditListDetailsActivity.this, "You can only share an existing list.", Toast.LENGTH_SHORT).show();
+				Toast.makeText(ListInfoActivity.this, "You can only share an existing list.", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -256,12 +256,12 @@ public class EditListDetailsActivity extends BaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
+			AlertDialog.Builder alert = new AlertDialog.Builder(ListInfoActivity.this);
 			
 			alert.setTitle("Change list name to:");
 
 			// Set an EditText view to get user input
-			final EditText input = new EditText(EditListDetailsActivity.this);
+			final EditText input = new EditText(ListInfoActivity.this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 			input.setText(listObject.getName());
 			alert.setView(input);
@@ -284,7 +284,7 @@ public class EditListDetailsActivity extends BaseActivity {
 									nameChanged=true;
 								}
 								else{
-									Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
+									Toast.makeText(ListInfoActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
 								}
 							}
 						});
@@ -306,12 +306,12 @@ public class EditListDetailsActivity extends BaseActivity {
 	class AddListNameListener implements OnClickListener{
 		@Override
 		public void onClick(View v) {
-			AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
+			AlertDialog.Builder alert = new AlertDialog.Builder(ListInfoActivity.this);
 
 			alert.setTitle("Add List with name:");
 
 			// Set an EditText view to get user input
-			final EditText input = new EditText(EditListDetailsActivity.this);
+			final EditText input = new EditText(ListInfoActivity.this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 			alert.setView(input);
 
@@ -334,10 +334,10 @@ public class EditListDetailsActivity extends BaseActivity {
 								if(e==null){
 									tvEditListName.setText(listObject.getName());
 									nameChanged=true;
-									Toast.makeText(EditListDetailsActivity.this, "List Created", Toast.LENGTH_SHORT).show();
+									Toast.makeText(ListInfoActivity.this, "List Created", Toast.LENGTH_SHORT).show();
 								}
 								else{
-									Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
+									Toast.makeText(ListInfoActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
 								}
 							}
 						});
@@ -361,7 +361,7 @@ public class EditListDetailsActivity extends BaseActivity {
 		public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 			item = sharesListadapter.getItem(position);
 			
-			AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
+			AlertDialog.Builder alert = new AlertDialog.Builder(ListInfoActivity.this);
 			alert.setTitle("Revoke share from: "+item.getSharedWithUsername()+" ?");
 			
 			alert.setPositiveButton("Revoke", new DialogInterface.OnClickListener() {
@@ -372,10 +372,10 @@ public class EditListDetailsActivity extends BaseActivity {
 							if(arg0==null){
 								sharesListadapter.loadObjects();
 								sharesListadapter.notifyDataSetChanged();
-								Toast.makeText(EditListDetailsActivity.this, "Removed successfully", Toast.LENGTH_SHORT).show();
+								Toast.makeText(ListInfoActivity.this, "Removed successfully", Toast.LENGTH_SHORT).show();
 							}
 							else{
-								Toast.makeText(EditListDetailsActivity.this, "Error. Refresh and try again.", Toast.LENGTH_SHORT).show();
+								Toast.makeText(ListInfoActivity.this, "Error. Refresh and try again.", Toast.LENGTH_SHORT).show();
 							}
 						}
 				    });
