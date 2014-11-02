@@ -56,60 +56,62 @@ public class EditListDetailsActivity extends BaseActivity {
 		tvEditListName = (TextView) findViewById(R.id.btnEditListName);
 		btnAddShare = (Button) findViewById(R.id.btnAddShare);
 		lvSharesList = (ListView) findViewById(R.id.lvSharesList);
+	}
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
 		
-		//Edit existing list.
-		if(list_id!=null)
+		if(list_id==null)
 		{
-			pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			pdMain.setCancelable(false);
-			pdMain.setMessage("Loading list details.");
-			pdMain.show();
-			ParseQuery<ListObject> listQuery = ListObject.getQuery();
-			listQuery.include("createdBy");
-			listQuery.getInBackground(list_id, new GetCallback<ListObject>(){
-				@Override
-				public void done(ListObject arg0, ParseException e) {
-					pdMain.dismiss();
-					if(e==null && arg0!=null){
-						listObject = arg0;
-						tvEditListName.setText(listObject.getName());
-						
-						loadSharesData();
-						
-						ParseUser createdBy = listObject.getParseUser("createdBy"); 
-						if(createdBy.getObjectId().equals(getCurrentUser().getObjectId())){
-							tvEditListName.setOnClickListener(new EditListNameListner());
-							btnAddShare.setOnClickListener(new ShareButtonListner());
-							lvSharesList.setOnItemLongClickListener(new SharesListItemLongClockListener());
-						}
-						else{
-							ViewGroup parentView_btnAddShare = (ViewGroup) btnAddShare.getParent();
-							parentView_btnAddShare.removeView(btnAddShare);
-							
-							tvEditListName.setBackgroundColor(Color.LTGRAY);
-							tvEditListName.setTextColor(Color.BLACK);
-							tvEditListName.setOnClickListener(new OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									Toast.makeText(EditListDetailsActivity.this, "You don't own this list. You can't change it.", Toast.LENGTH_SHORT).show();
-								}
-							});
-						}
-					}
-					else{
-						Toast.makeText(getApplicationContext(), "Error Retreiving: Try again.", Toast.LENGTH_SHORT).show();
-						finish();
-					}
-				}
-			});
-		}
-		//Adding new list.
-		else{
+			// activity is being used to create new list.
 			tvEditListName.setOnClickListener(new AddListNameListener());
 			btnAddShare.setOnClickListener(new ShareButtonListner());
+			return;
 		}
 		
+		pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		pdMain.setCancelable(false);
+		pdMain.setMessage("Loading list details.");
+		pdMain.show();
 		
+		ParseQuery<ListObject> listQuery = ListObject.getQuery();
+		listQuery.include("createdBy");
+		listQuery.getInBackground(list_id, new GetCallback<ListObject>(){
+			@Override
+			public void done(ListObject arg0, ParseException exception) {
+				pdMain.dismiss();
+				if(exception != null || arg0 == null){
+					Toast.makeText(getApplicationContext(), "Error Retreiving: Try again.", Toast.LENGTH_SHORT).show();
+					finish();
+				}
+				
+				listObject = arg0;
+				tvEditListName.setText(listObject.getName());
+				
+				loadSharesData();
+				
+				ParseUser createdBy = listObject.getParseUser("createdBy"); 
+				if(createdBy.getObjectId().equals(getCurrentUser().getObjectId())){
+					tvEditListName.setOnClickListener(new EditListNameListner());
+					btnAddShare.setOnClickListener(new ShareButtonListner());
+					lvSharesList.setOnItemLongClickListener(new SharesListItemLongClockListener());
+				}
+				else{
+					ViewGroup parentView_btnAddShare = (ViewGroup) btnAddShare.getParent();
+					parentView_btnAddShare.removeView(btnAddShare);
+					
+					tvEditListName.setBackgroundColor(Color.LTGRAY);
+					tvEditListName.setTextColor(Color.BLACK);
+					tvEditListName.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							Toast.makeText(EditListDetailsActivity.this, "You don't own this list. You can't change it.", Toast.LENGTH_SHORT).show();
+						}
+					});
+				}
+			}
+		});
 	}
 	
 	public void loadSharesData(){
