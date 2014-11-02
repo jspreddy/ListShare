@@ -205,7 +205,8 @@ public class EditListDetailsActivity extends BaseActivity {
 															pdMain.dismiss();
 															if(e==null){
 																Toast.makeText(EditListDetailsActivity.this, "List has been shared.", Toast.LENGTH_SHORT).show();
-																loadSharesData();
+																sharesListadapter.loadObjects();
+																sharesListadapter.notifyDataSetChanged();
 															}
 															else{
 																Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
@@ -369,7 +370,7 @@ public class EditListDetailsActivity extends BaseActivity {
 						@Override
 						public void done(ParseException arg0) {
 							if(arg0==null){
-								loadSharesData();
+								sharesListadapter.loadObjects();
 								sharesListadapter.notifyDataSetChanged();
 								Toast.makeText(EditListDetailsActivity.this, "Removed successfully", Toast.LENGTH_SHORT).show();
 							}
