@@ -100,11 +100,7 @@ public class ViewListActivity extends BaseActivity {
 
 	private void DisplayListContents() {
 		listofItem.clear();
-		pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		pdMain.setCancelable(false);
-		pdMain.setMessage("Loading List");
-		pdMain.show();
-
+		
 		ParseQuery<ListItemsObject> itemsQuery = ListItemsObject.getQuery();
 		itemsQuery.include("editedBy");
 		itemsQuery.whereEqualTo("ListId_fk", listObject);
@@ -137,7 +133,13 @@ public class ViewListActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_list);
-
+		
+		pdMain = new ProgressDialog(ViewListActivity.this);
+		pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		pdMain.setCancelable(false);
+		pdMain.setMessage("Loading List");
+		pdMain.show();
+		
 		mainColor = Color.parseColor("#FF8800");
 
 		if (getIntent().getExtras() != null) {
@@ -145,8 +147,7 @@ public class ViewListActivity extends BaseActivity {
 		} else {
 			finish();
 		}
-
-		pdMain = new ProgressDialog(ViewListActivity.this);
+		
 		listofItem = new ArrayList<Items>();
 
 		listView = (ListView) findViewById(R.id.listView1);
