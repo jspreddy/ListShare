@@ -4,6 +4,8 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
+import helpers.InputHelper;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -40,7 +42,7 @@ public class SignUpActivity extends Activity {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				isEmpty(etSignUpUsername);
+				InputHelper.isEmpty(etSignUpUsername, getString(R.string.error_editText_empty));
 			}
 
 			@Override
@@ -59,7 +61,7 @@ public class SignUpActivity extends Activity {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				isEmpty(etSignUpPassword);
+				InputHelper.isEmpty(etSignUpPassword, getString(R.string.error_editText_empty));
 			}
 
 			@Override
@@ -78,7 +80,7 @@ public class SignUpActivity extends Activity {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				isEmpty(etSignUpPasswordRetype);
+				InputHelper.isEmpty(etSignUpPasswordRetype, getString(R.string.error_editText_empty));
 			}
 
 			@Override
@@ -97,7 +99,14 @@ public class SignUpActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				if (!isEmpty(etSignUpUsername) && !isEmpty(etSignUpPassword) && isMatching(etSignUpPassword, etSignUpPasswordRetype)) {
+				if (!InputHelper.isEmpty(etSignUpUsername, getString(R.string.error_editText_empty)) 
+						&& !InputHelper.isEmpty(etSignUpPassword, getString(R.string.error_editText_empty)) 
+						&& InputHelper.isMatching(
+								etSignUpPassword,
+								etSignUpPasswordRetype, 
+								getString(R.string.error_editText_matching),
+								getString(R.string.error_editText_matching)
+								)) {
 					String uname, password;
 					uname = etSignUpUsername.getText().toString();
 					password = etSignUpPassword.getText().toString();
@@ -130,27 +139,4 @@ public class SignUpActivity extends Activity {
 			}
 		});
 	}
-
-	public boolean isEmpty(EditText et) {
-		String text = et.getText().toString();
-		if (text.isEmpty()) {
-			et.setError("This cannot be empty.");
-			return true;
-		}
-		et.setError(null);
-		return false;
-	}
-
-	public boolean isMatching(EditText et_pwd1, EditText et_pwd2) {
-		String pwd1 = et_pwd1.getText().toString();
-		String pwd2 = et_pwd2.getText().toString();
-
-		if (!pwd1.equals(new String(pwd2))) {
-			et_pwd2.setError("re typed Password does not match.");
-			return false;
-		}
-		et_pwd2.setError(null);
-		return true;
-	}
-
 }
