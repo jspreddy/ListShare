@@ -80,7 +80,7 @@ public class ListInfoActivity extends BaseActivity {
 		listQuery.getInBackground(list_id, new GetCallback<ListObject>(){
 			@Override
 			public void done(ListObject arg0, ParseException exception) {
-				pdMain.dismiss();
+				if(pdMain != null) pdMain.dismiss();
 				if(exception != null || arg0 == null){
 					Toast.makeText(getApplicationContext(), "Error Retreiving: Try again.", Toast.LENGTH_SHORT).show();
 					finish();
@@ -202,7 +202,7 @@ public class ListInfoActivity extends BaseActivity {
 													sharesObject.saveInBackground(new SaveCallback(){
 														@Override
 														public void done(ParseException e) {
-															pdMain.dismiss();
+															if(pdMain != null) pdMain.dismiss();
 															if(e==null){
 																Toast.makeText(ListInfoActivity.this, "List has been shared.", Toast.LENGTH_SHORT).show();
 																sharesListadapter.loadObjects();
@@ -215,7 +215,7 @@ public class ListInfoActivity extends BaseActivity {
 													});
 												}
 												else{
-													pdMain.dismiss();
+													if(pdMain != null) pdMain.dismiss();
 													Toast.makeText(ListInfoActivity.this, "You have already shared the list with this user.", Toast.LENGTH_SHORT).show();
 												}
 											}
@@ -223,11 +223,11 @@ public class ListInfoActivity extends BaseActivity {
 										
 									}
 									else if(arg0==null){
-										pdMain.dismiss();
+										if(pdMain != null) pdMain.dismiss();
 										Toast.makeText(ListInfoActivity.this, "User doesn't exist.", Toast.LENGTH_LONG).show();
 									}
 									else{
-										pdMain.dismiss();
+										if(pdMain != null) pdMain.dismiss();
 										Toast.makeText(ListInfoActivity.this, "Error. Try again.", Toast.LENGTH_LONG).show();
 									}
 								}
@@ -278,7 +278,7 @@ public class ListInfoActivity extends BaseActivity {
 						listObject.saveInBackground(new SaveCallback(){
 							@Override
 							public void done(ParseException e) {
-								pdMain.dismiss();
+								if(pdMain != null) pdMain.dismiss();
 								if(e==null){
 									tvEditListName.setText(listObject.getName());
 									nameChanged=true;
@@ -330,7 +330,7 @@ public class ListInfoActivity extends BaseActivity {
 						listObject.saveInBackground(new SaveCallback(){
 							@Override
 							public void done(ParseException e) {
-								pdMain.dismiss();
+								if(pdMain != null) pdMain.dismiss();
 								if(e==null){
 									tvEditListName.setText(listObject.getName());
 									nameChanged=true;

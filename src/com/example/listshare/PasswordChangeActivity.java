@@ -57,7 +57,7 @@ public class PasswordChangeActivity extends BaseActivity {
 					@Override
 					public void done(ParseUser user, ParseException error) {
 						if(user == null || error != null){
-							pdMain.dismiss();
+							if(pdMain != null) pdMain.dismiss();
 							Toast.makeText(PasswordChangeActivity.this, "Authentication failed. Try again.", Toast.LENGTH_SHORT).show();
 							return;
 						}
@@ -66,7 +66,7 @@ public class PasswordChangeActivity extends BaseActivity {
 
 							@Override
 							public void done(ParseException error) {
-								pdMain.dismiss();
+								if(pdMain != null) pdMain.dismiss();
 								if(error != null){
 									Toast.makeText(PasswordChangeActivity.this, "Saving Failed. Try again.", Toast.LENGTH_SHORT).show();
 									return;

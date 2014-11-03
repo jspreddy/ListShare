@@ -116,7 +116,7 @@ public class ViewListActivity extends BaseActivity {
 									.getState()));
 				}
 
-				pdMain.dismiss();
+				if(pdMain != null) pdMain.dismiss();
 				if (listofItem != null) {
 					ListItemAdapter adapter = new ListItemAdapter(
 							ViewListActivity.this, listofItem);

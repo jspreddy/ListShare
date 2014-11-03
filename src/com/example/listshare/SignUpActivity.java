@@ -8,6 +8,7 @@ import helpers.InputHelper;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,7 +25,7 @@ public class SignUpActivity extends Activity {
 	ParseUser user;
 	EditText etSignUpUsername, etSignUpPassword, etSignUpPasswordRetype;
 	Button btnSignUp, btnSignUpToLogin;
-
+	ProgressDialog pdMain;
 	Intent i;
 
 	@Override
@@ -115,8 +116,14 @@ public class SignUpActivity extends Activity {
 					user.setUsername(uname);
 					user.setPassword(password);
 
+					pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+					pdMain.setCancelable(false);
+					pdMain.setMessage("Saving..");
+					pdMain.show();
+					
 					user.signUpInBackground(new SignUpCallback() {
 						public void done(ParseException e) {
+							if(pdMain != null) pdMain.dismiss();
 							if (e == null) {
 								Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
 								startActivity(i);

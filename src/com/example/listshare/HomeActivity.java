@@ -139,7 +139,7 @@ public class HomeActivity extends BaseActivity {
 								mainList.add(new MainList(obj.getName(), user.getUsername(), obj.getId()));
 							}
 						}
-						pdMain.dismiss();
+						if(pdMain != null) pdMain.dismiss();
 						
 						if(mainList!=null && mainList.size() != 0){
 							ListAdapter la = new ListAdapter(HomeActivity.this, mainList);

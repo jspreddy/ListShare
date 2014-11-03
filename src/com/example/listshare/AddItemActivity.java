@@ -78,6 +78,7 @@ public class AddItemActivity extends Activity {
 			query.include("editedBy");
 			query.getInBackground(itemId, new GetCallback<ListItemsObject>() {
 				public void done(ListItemsObject object, ParseException e) {
+					if(pdMain != null) pdMain.dismiss();
 					if (e == null) {
 						currentItem = object;
 						Log.d("DEBUG", object.getName());
@@ -88,7 +89,6 @@ public class AddItemActivity extends Activity {
 						int position = adapter.getPosition(unit);
 						spinner.setSelection(position);
 						t.setText(object.getUser().getUsername());
-						pdMain.dismiss();
 					} else {
 						Toast.makeText(getApplicationContext(), "Error. Try again.", Toast.LENGTH_SHORT).show();
 						finish();
