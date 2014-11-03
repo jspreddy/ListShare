@@ -13,7 +13,7 @@ public class InputHelper {
 		return false;
 	}
 	
-	public static boolean isMatching(EditText et1, EditText et2, String errorMessage1, String errorMessage2) {
+	public static boolean areMatching(EditText et1, EditText et2, String errorMessage1, String errorMessage2) {
 		String pwd1 = et1.getText().toString();
 		String pwd2 = et2.getText().toString();
 

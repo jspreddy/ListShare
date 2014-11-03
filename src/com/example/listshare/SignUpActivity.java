@@ -101,7 +101,7 @@ public class SignUpActivity extends Activity {
 			public void onClick(View v) {
 				if (!InputHelper.isEmpty(etSignUpUsername, getString(R.string.error_editText_empty)) 
 						&& !InputHelper.isEmpty(etSignUpPassword, getString(R.string.error_editText_empty)) 
-						&& InputHelper.isMatching(
+						&& InputHelper.areMatching(
 								etSignUpPassword,
 								etSignUpPasswordRetype, 
 								getString(R.string.error_editText_matching),

@@ -31,7 +31,7 @@ public class PasswordChangeActivity extends BaseActivity {
 				InputHelper.isEmpty(etPasswordChangeNewPassword, getString(R.string.error_editText_empty));
 				InputHelper.isEmpty(etPasswordChangeOldPassword, getString(R.string.error_editText_empty));
 				InputHelper.isEmpty(etPasswordChangeRetypeNewPassword, getString(R.string.error_editText_empty));
-				InputHelper.isMatching(
+				InputHelper.areMatching(
 						etPasswordChangeNewPassword, etPasswordChangeRetypeNewPassword,
 						getString(R.string.error_editText_matching), getString(R.string.error_editText_matching));
 				
