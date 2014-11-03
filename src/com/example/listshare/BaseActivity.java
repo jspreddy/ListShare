@@ -60,6 +60,12 @@ public class BaseActivity extends Activity {
 			startActivity(intnt);
 			finish();
 		}
+		if (item.getItemId() == R.id.action_change_password) {
+			Intent intnt = new Intent(BaseActivity.this, PasswordChangeActivity.class);
+			intnt.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			intnt.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			startActivity(intnt);
+		}
 		return true;
 	}
 }
