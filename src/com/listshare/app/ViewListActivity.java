@@ -1,4 +1,4 @@
-package com.example.listshare;
+package com.listshare.app;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -18,9 +18,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.listshare.objects.Items;
-import com.example.listshare.objects.ListItemsObject;
-import com.example.listshare.objects.ListObject;
+import com.listshare.app.objects.Items;
+import com.listshare.app.objects.ListItemsObject;
+import com.listshare.app.objects.ListObject;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;

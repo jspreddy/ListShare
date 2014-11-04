@@ -1,30 +1,30 @@
-package com.example.listshare;
+package com.listshare.app;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.example.listshare.objects.ListObject;
-import com.example.listshare.objects.MainList;
-import com.example.listshare.objects.SharesObject;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-
-import android.os.Bundle;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.listshare.app.objects.ListObject;
+import com.listshare.app.objects.MainList;
+import com.listshare.app.objects.SharesObject;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeActivity extends BaseActivity {
 

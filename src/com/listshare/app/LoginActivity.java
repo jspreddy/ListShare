@@ -1,18 +1,17 @@
-package com.example.listshare;
+package com.listshare.app;
 
-import android.os.Bundle;
 import android.app.Activity;
-import android.app.LauncherActivity.ListItem;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.listshare.objects.ListItemsObject;
-import com.example.listshare.objects.ListObject;
-import com.example.listshare.objects.SharesObject;
+import com.listshare.app.objects.ListItemsObject;
+import com.listshare.app.objects.ListObject;
+import com.listshare.app.objects.SharesObject;
 import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;

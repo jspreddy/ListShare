@@ -1,6 +1,4 @@
-package com.example.listshare;
-
-import com.parse.ParseUser;
+package com.listshare.app;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.parse.ParseUser;
 
 public class BaseActivity extends Activity {
 	

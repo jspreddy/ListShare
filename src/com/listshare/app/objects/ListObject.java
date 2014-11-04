@@ -1,4 +1,4 @@
-package com.example.listshare.objects;
+package com.listshare.app.objects;
 
 import com.parse.*;
 

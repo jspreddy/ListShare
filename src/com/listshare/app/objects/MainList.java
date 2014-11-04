@@ -1,4 +1,4 @@
-package com.example.listshare.objects;
+package com.listshare.app.objects;
 
 public class MainList {
 	String name, owner, id;

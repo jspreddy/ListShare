@@ -1,4 +1,4 @@
-package com.example.listshare;
+package com.listshare.app;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
 import helpers.InputHelper;
 
 public class PasswordChangeActivity extends BaseActivity {
