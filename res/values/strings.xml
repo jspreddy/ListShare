@@ -4,17 +4,14 @@
     <string name="app_name">ListShare</string>
     <string name="action_settings">Settings</string>
     <string name="action_logout">Logout</string>
-    
+    <string name="action_change_password">Change Password</string>
     <string name="hello_world">Hello world!</string>
-    
     <string name="title_activity_home">ListShare: MyLists</string>
     <string name="title_activity_edit_list_details">Add/Edit List</string>
     <string name="title_activity_view_list">View List</string>
     <string name="title_activity_sign_up">SignUp</string>
     <string name="title_activity_add_item">Add/Edit Item</string>
-
     <string name="btnListAdd">Add List</string>
-    
     <string name="Title">Title</string>
     <string name="Owner">Owner: </string>
     <string name="Save">Save</string>
@@ -24,8 +21,11 @@
     <string name="qty">Quantitity</string>
     <string name="count">Count</string>
     <string name="last_edit_by">Last edited by: </string>
-    
     <string name="tvEnterListName">List Name:</string>
     <string name="tvChangeSharedWith">Shared With:</string>
+    <string name="title_activity_password_change">PasswordChangeActivity</string>
     
+    <string name="error_editText_empty">This can not be empty.</string>
+    <string name="error_editText_matching">These need to match.</string>
+
 </resources>

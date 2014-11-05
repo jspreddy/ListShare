@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" 
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/item_vert_margin"
     android:paddingLeft="@dimen/item_horz_margin"
     android:paddingRight="@dimen/item_horz_margin"
-    android:paddingTop="@dimen/item_vert_margin"
-    android:paddingBottom="@dimen/item_vert_margin"
-    android:orientation="horizontal">
+    android:paddingTop="@dimen/item_vert_margin" 
+    android:baselineAligned="false" >
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -29,20 +30,19 @@
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="@dimen/padding_seperator"
                 android:gravity="left"
+                android:paddingRight="@dimen/padding_seperator"
                 android:text="@string/qty"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
-            
+
             <TextView
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="left"
                 android:layout_weight="1"
+                android:gravity="left"
                 android:text="@string/unit"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
-            
         </LinearLayout>
 
         <TextView
@@ -66,7 +66,6 @@
             android:gravity="center_vertical|center_horizontal"
             android:text="@string/count"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
     </LinearLayout>
 
 </LinearLayout>

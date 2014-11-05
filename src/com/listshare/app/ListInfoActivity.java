@@ -1,24 +1,11 @@
-package com.example.listshare;
+package com.listshare.app;
 
-import com.example.listshare.objects.ListObject;
-import com.example.listshare.objects.SharesObject;
-import com.parse.CountCallback;
-import com.parse.DeleteCallback;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseQueryAdapter;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
-
-import android.os.Bundle;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,11 +17,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class EditListDetailsActivity extends Activity {
+import com.listshare.app.objects.ListObject;
+import com.listshare.app.objects.SharesObject;
+import com.parse.CountCallback;
+import com.parse.DeleteCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseQueryAdapter;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
+public class ListInfoActivity extends BaseActivity {
 
 	Button btnAddShare;
 	TextView tvEditListName;
-	ParseUser currentUser;
 	
 	String list_id;
 	ListObject listObject;
@@ -48,70 +45,71 @@ public class EditListDetailsActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_edit_list_details);
+		setContentView(R.layout.activity_list_info);
 		
 		Intent intent = getIntent();
 		list_id = intent.getStringExtra("list_id");
-		currentUser = ParseUser.getCurrentUser();
-		pdMain=new ProgressDialog(EditListDetailsActivity.this);
+		pdMain=new ProgressDialog(ListInfoActivity.this);
 		
 		tvEditListName = (TextView) findViewById(R.id.btnEditListName);
 		btnAddShare = (Button) findViewById(R.id.btnAddShare);
 		lvSharesList = (ListView) findViewById(R.id.lvSharesList);
+	}
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
 		
-		//Edit existing list.
-		if(list_id!=null)
+		if(list_id==null)
 		{
-			pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			pdMain.setCancelable(false);
-			pdMain.setMessage("Loading list details.");
-			pdMain.show();
-			ParseQuery<ListObject> listQuery = ListObject.getQuery();
-			listQuery.include("createdBy");
-			listQuery.getInBackground(list_id, new GetCallback<ListObject>(){
-				@Override
-				public void done(ListObject arg0, ParseException e) {
-					pdMain.dismiss();
-					if(e==null && arg0!=null){
-						listObject = arg0;
-						tvEditListName.setText(listObject.getName());
-						
-						loadSharesData();
-						
-						ParseUser createdBy =listObject.getParseUser("createdBy"); 
-						if(createdBy.getObjectId().equals(currentUser.getObjectId())){
-							tvEditListName.setOnClickListener(new EditListNameListner());
-							btnAddShare.setOnClickListener(new ShareButtonListner());
-							lvSharesList.setOnItemLongClickListener(new SharesListItemLongClockListener());
-						}
-						else{
-							ViewGroup parentView_btnAddShare = (ViewGroup) btnAddShare.getParent();
-							parentView_btnAddShare.removeView(btnAddShare);
-							
-							tvEditListName.setBackgroundColor(Color.LTGRAY);
-							tvEditListName.setTextColor(Color.BLACK);
-							tvEditListName.setOnClickListener(new OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									Toast.makeText(EditListDetailsActivity.this, "You don't own this list. You can't change it.", Toast.LENGTH_SHORT).show();
-								}
-							});
-						}
-					}
-					else{
-						Toast.makeText(getApplicationContext(), "Error Retreiving: Try again.", Toast.LENGTH_SHORT).show();
-						finish();
-					}
-				}
-			});
-		}
-		//Adding new list.
-		else{
+			// activity is being used to create new list.
 			tvEditListName.setOnClickListener(new AddListNameListener());
 			btnAddShare.setOnClickListener(new ShareButtonListner());
+			return;
 		}
 		
+		pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		pdMain.setCancelable(false);
+		pdMain.setMessage("Loading list details.");
+		pdMain.show();
 		
+		ParseQuery<ListObject> listQuery = ListObject.getQuery();
+		listQuery.include("createdBy");
+		listQuery.getInBackground(list_id, new GetCallback<ListObject>(){
+			@Override
+			public void done(ListObject arg0, ParseException exception) {
+				if(pdMain != null) pdMain.dismiss();
+				if(exception != null || arg0 == null){
+					Toast.makeText(getApplicationContext(), "Error Retreiving: Try again.", Toast.LENGTH_SHORT).show();
+					finish();
+				}
+				
+				listObject = arg0;
+				tvEditListName.setText(listObject.getName());
+				
+				loadSharesData();
+				
+				ParseUser createdBy = listObject.getParseUser("createdBy"); 
+				if(createdBy.getObjectId().equals(getCurrentUser().getObjectId())){
+					tvEditListName.setOnClickListener(new EditListNameListner());
+					btnAddShare.setOnClickListener(new ShareButtonListner());
+					lvSharesList.setOnItemLongClickListener(new SharesListItemLongClockListener());
+				}
+				else{
+					ViewGroup parentView_btnAddShare = (ViewGroup) btnAddShare.getParent();
+					parentView_btnAddShare.removeView(btnAddShare);
+					
+					tvEditListName.setBackgroundColor(Color.LTGRAY);
+					tvEditListName.setTextColor(Color.BLACK);
+					tvEditListName.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							Toast.makeText(ListInfoActivity.this, "You don't own this list. You can't change it.", Toast.LENGTH_SHORT).show();
+						}
+					});
+				}
+			}
+		});
 	}
 	
 	public void loadSharesData(){
@@ -125,7 +123,7 @@ public class EditListDetailsActivity extends Activity {
 			}
 		};
 		
-		sharesListadapter = new ParseQueryAdapter<SharesObject>(EditListDetailsActivity.this, sharesListFactory){
+		sharesListadapter = new ParseQueryAdapter<SharesObject>(ListInfoActivity.this, sharesListFactory){
 			@Override
 			public View getItemView(SharesObject object, View v, ViewGroup parent) {
 				
@@ -154,13 +152,13 @@ public class EditListDetailsActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			if(listObject != null){
-				AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
+				AlertDialog.Builder alert = new AlertDialog.Builder(ListInfoActivity.this);
 
 				alert.setTitle("Share with User:");
 				alert.setMessage("Enter the username of the person you want to share the list: "+listObject.getName());
 
 				// Set an EditText view to get user input
-				final EditText input = new EditText(EditListDetailsActivity.this);
+				final EditText input = new EditText(ListInfoActivity.this);
 				input.setInputType(InputType.TYPE_CLASS_TEXT);
 				
 				alert.setView(input);
@@ -169,8 +167,8 @@ public class EditListDetailsActivity extends Activity {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						String uname = input.getText().toString();
 						
-						if(uname.equals(currentUser.getUsername())){
-							Toast.makeText(EditListDetailsActivity.this, "You can't share your list with yourself.", Toast.LENGTH_LONG).show();
+						if(uname.equals(getCurrentUser().getUsername())){
+							Toast.makeText(ListInfoActivity.this, "You can't share your list with yourself.", Toast.LENGTH_LONG).show();
 						}
 						else if(!uname.isEmpty()){
 							pdMain.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -202,32 +200,33 @@ public class EditListDetailsActivity extends Activity {
 													sharesObject.saveInBackground(new SaveCallback(){
 														@Override
 														public void done(ParseException e) {
-															pdMain.dismiss();
+															if(pdMain != null) pdMain.dismiss();
 															if(e==null){
-																Toast.makeText(EditListDetailsActivity.this, "List has been shared.", Toast.LENGTH_SHORT).show();
-																loadSharesData();
+																Toast.makeText(ListInfoActivity.this, "List has been shared.", Toast.LENGTH_SHORT).show();
+																sharesListadapter.loadObjects();
+																sharesListadapter.notifyDataSetChanged();
 															}
 															else{
-																Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
+																Toast.makeText(ListInfoActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
 															}
 														}
 													});
 												}
 												else{
-													pdMain.dismiss();
-													Toast.makeText(EditListDetailsActivity.this, "You have already shared the list with this user.", Toast.LENGTH_SHORT).show();
+													if(pdMain != null) pdMain.dismiss();
+													Toast.makeText(ListInfoActivity.this, "You have already shared the list with this user.", Toast.LENGTH_SHORT).show();
 												}
 											}
 										});
 										
 									}
 									else if(arg0==null){
-										pdMain.dismiss();
-										Toast.makeText(EditListDetailsActivity.this, "User doesn't exist.", Toast.LENGTH_LONG).show();
+										if(pdMain != null) pdMain.dismiss();
+										Toast.makeText(ListInfoActivity.this, "User doesn't exist.", Toast.LENGTH_LONG).show();
 									}
 									else{
-										pdMain.dismiss();
-										Toast.makeText(EditListDetailsActivity.this, "Error. Try again.", Toast.LENGTH_LONG).show();
+										if(pdMain != null) pdMain.dismiss();
+										Toast.makeText(ListInfoActivity.this, "Error. Try again.", Toast.LENGTH_LONG).show();
 									}
 								}
 							});
@@ -246,7 +245,7 @@ public class EditListDetailsActivity extends Activity {
 				
 			}
 			else{
-				Toast.makeText(EditListDetailsActivity.this, "You can only share an existing list.", Toast.LENGTH_SHORT).show();
+				Toast.makeText(ListInfoActivity.this, "You can only share an existing list.", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -255,12 +254,12 @@ public class EditListDetailsActivity extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
+			AlertDialog.Builder alert = new AlertDialog.Builder(ListInfoActivity.this);
 			
 			alert.setTitle("Change list name to:");
 
 			// Set an EditText view to get user input
-			final EditText input = new EditText(EditListDetailsActivity.this);
+			final EditText input = new EditText(ListInfoActivity.this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 			input.setText(listObject.getName());
 			alert.setView(input);
@@ -277,13 +276,13 @@ public class EditListDetailsActivity extends Activity {
 						listObject.saveInBackground(new SaveCallback(){
 							@Override
 							public void done(ParseException e) {
-								pdMain.dismiss();
+								if(pdMain != null) pdMain.dismiss();
 								if(e==null){
 									tvEditListName.setText(listObject.getName());
 									nameChanged=true;
 								}
 								else{
-									Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
+									Toast.makeText(ListInfoActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
 								}
 							}
 						});
@@ -305,12 +304,12 @@ public class EditListDetailsActivity extends Activity {
 	class AddListNameListener implements OnClickListener{
 		@Override
 		public void onClick(View v) {
-			AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
+			AlertDialog.Builder alert = new AlertDialog.Builder(ListInfoActivity.this);
 
 			alert.setTitle("Add List with name:");
 
 			// Set an EditText view to get user input
-			final EditText input = new EditText(EditListDetailsActivity.this);
+			final EditText input = new EditText(ListInfoActivity.this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 			alert.setView(input);
 
@@ -325,18 +324,18 @@ public class EditListDetailsActivity extends Activity {
 						
 						listObject = new ListObject();
 						listObject.setName(listName);
-						listObject.setUser(currentUser);
+						listObject.setUser(getCurrentUser());
 						listObject.saveInBackground(new SaveCallback(){
 							@Override
 							public void done(ParseException e) {
-								pdMain.dismiss();
+								if(pdMain != null) pdMain.dismiss();
 								if(e==null){
 									tvEditListName.setText(listObject.getName());
 									nameChanged=true;
-									Toast.makeText(EditListDetailsActivity.this, "List Created", Toast.LENGTH_SHORT).show();
+									Toast.makeText(ListInfoActivity.this, "List Created", Toast.LENGTH_SHORT).show();
 								}
 								else{
-									Toast.makeText(EditListDetailsActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
+									Toast.makeText(ListInfoActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();
 								}
 							}
 						});
@@ -360,7 +359,7 @@ public class EditListDetailsActivity extends Activity {
 		public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 			item = sharesListadapter.getItem(position);
 			
-			AlertDialog.Builder alert = new AlertDialog.Builder(EditListDetailsActivity.this);
+			AlertDialog.Builder alert = new AlertDialog.Builder(ListInfoActivity.this);
 			alert.setTitle("Revoke share from: "+item.getSharedWithUsername()+" ?");
 			
 			alert.setPositiveButton("Revoke", new DialogInterface.OnClickListener() {
@@ -369,12 +368,12 @@ public class EditListDetailsActivity extends Activity {
 						@Override
 						public void done(ParseException arg0) {
 							if(arg0==null){
-								loadSharesData();
+								sharesListadapter.loadObjects();
 								sharesListadapter.notifyDataSetChanged();
-								Toast.makeText(EditListDetailsActivity.this, "Removed successfully", Toast.LENGTH_SHORT).show();
+								Toast.makeText(ListInfoActivity.this, "Removed successfully", Toast.LENGTH_SHORT).show();
 							}
 							else{
-								Toast.makeText(EditListDetailsActivity.this, "Error. Refresh and try again.", Toast.LENGTH_SHORT).show();
+								Toast.makeText(ListInfoActivity.this, "Error. Refresh and try again.", Toast.LENGTH_SHORT).show();
 							}
 						}
 				    });
