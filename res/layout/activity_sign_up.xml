@@ -23,7 +23,7 @@
 
         <EditText
             android:id="@+id/etSignUpUsername"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10" >
@@ -46,9 +46,10 @@
 
         <EditText
             android:id="@+id/etSignUpPassword"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:inputType="textPassword"
             android:ems="10" />
 
     </LinearLayout>
@@ -66,9 +67,10 @@
 
         <EditText
             android:id="@+id/etSignUpPasswordRetype"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:inputType="textPassword"
             android:ems="10" />
 
     </LinearLayout>
