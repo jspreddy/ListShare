@@ -36,7 +36,8 @@ public class SignUpActivity extends Activity {
 		etSignUpPasswordRetype = (EditText) findViewById(R.id.etSignUpPasswordRetype);
 		btnSignUp = (Button) findViewById(R.id.btnSignUp);
 		btnSignUpToLogin = (Button) findViewById(R.id.btnSignUpToLogin);
-
+		pdMain=new ProgressDialog(SignUpActivity.this);
+		
 		etSignUpUsername.addTextChangedListener(new TextWatcher() {
 
 			@Override
