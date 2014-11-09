@@ -149,6 +149,7 @@ public class ListInfoActivity extends BaseActivity {
 	}
 
 	class ShareButtonListner implements OnClickListener{
+		EditText input;
 		@Override
 		public void onClick(View v) {
 			if(listObject != null){
@@ -158,7 +159,7 @@ public class ListInfoActivity extends BaseActivity {
 				alert.setMessage("Enter the username of the person you want to share the list: "+listObject.getName());
 
 				// Set an EditText view to get user input
-				final EditText input = new EditText(ListInfoActivity.this);
+				input = new EditText(ListInfoActivity.this);
 				input.setInputType(InputType.TYPE_CLASS_TEXT);
 				
 				alert.setView(input);
@@ -251,7 +252,9 @@ public class ListInfoActivity extends BaseActivity {
 	}
 	
 	class EditListNameListner implements OnClickListener{
-
+		
+		EditText input;
+		
 		@Override
 		public void onClick(View v) {
 			AlertDialog.Builder alert = new AlertDialog.Builder(ListInfoActivity.this);
@@ -259,7 +262,7 @@ public class ListInfoActivity extends BaseActivity {
 			alert.setTitle("Change list name to:");
 
 			// Set an EditText view to get user input
-			final EditText input = new EditText(ListInfoActivity.this);
+			input = new EditText(ListInfoActivity.this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 			input.setText(listObject.getName());
 			alert.setView(input);
@@ -302,6 +305,7 @@ public class ListInfoActivity extends BaseActivity {
 	}
 
 	class AddListNameListener implements OnClickListener{
+		EditText input;
 		@Override
 		public void onClick(View v) {
 			AlertDialog.Builder alert = new AlertDialog.Builder(ListInfoActivity.this);
@@ -309,7 +313,7 @@ public class ListInfoActivity extends BaseActivity {
 			alert.setTitle("Add List with name:");
 
 			// Set an EditText view to get user input
-			final EditText input = new EditText(ListInfoActivity.this);
+			input = new EditText(ListInfoActivity.this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 			alert.setView(input);
 
@@ -333,6 +337,7 @@ public class ListInfoActivity extends BaseActivity {
 									tvEditListName.setText(listObject.getName());
 									nameChanged=true;
 									Toast.makeText(ListInfoActivity.this, "List Created", Toast.LENGTH_SHORT).show();
+									loadSharesData();
 								}
 								else{
 									Toast.makeText(ListInfoActivity.this, "Error Saving: Try again.", Toast.LENGTH_SHORT).show();

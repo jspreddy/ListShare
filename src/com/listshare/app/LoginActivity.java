@@ -37,7 +37,7 @@ public class LoginActivity extends Activity {
 		ParseObject.registerSubclass(ListObject.class);
 		ParseObject.registerSubclass(SharesObject.class);
 		
-		Parse.initialize(this, "nW4RoU4uXcAd0jZ0yWzqfO0rwAqu8MtSbLdpYw7m", "yd0xuMmvr7ekL0wENpSi5yrbGDYrfCe3oD7ZCoKl");
+		Parse.initialize(this.getApplicationContext(), "nW4RoU4uXcAd0jZ0yWzqfO0rwAqu8MtSbLdpYw7m", "yd0xuMmvr7ekL0wENpSi5yrbGDYrfCe3oD7ZCoKl");
 		ParseAnalytics.trackAppOpened(getIntent());
 		homeActivity = new Intent(LoginActivity.this, HomeActivity.class);
 		signUpActivity = new Intent(LoginActivity.this, SignUpActivity.class);
