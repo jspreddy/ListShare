@@ -29,15 +29,24 @@ Thumbs.db
 *.iml
 *.ipr
 *.iws
+*.swp
 .idea/
 gen
 gen/com/example/listshare/R.java
 
 # android studio and gradle stuff.
 .gradle
-/local.properties
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
+
 /build
+*/build
+/*/*/build
+*/production
+/*/*/production
+~local.properties
+*/out
+
+import-summary.txt
 
