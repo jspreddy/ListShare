@@ -86,8 +86,8 @@ public class ViewListActivity extends BaseActivity {
         }
     }
 
-    ListView listView;
-    Button addItemBtn;
+    ListView lvItemList;
+    Button btnAddItem;
     String listId;
     Intent i;
     ProgressDialog pdMain;
@@ -117,9 +117,9 @@ public class ViewListActivity extends BaseActivity {
                 }
                 if (listOfItems != null) {
                     ListItemAdapter adapter = new ListItemAdapter(ViewListActivity.this, listOfItems);
-                    listView.setAdapter(adapter);
+                    lvItemList.setAdapter(adapter);
                 } else {
-                    Toast.makeText(ViewListActivity.this, "No itemsto display", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ViewListActivity.this, "No items to display", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -146,9 +146,9 @@ public class ViewListActivity extends BaseActivity {
 
         listOfItems = new ArrayList<Items>();
 
-        listView = (ListView) findViewById(R.id.listView1);
+        lvItemList = (ListView) findViewById(R.id.itemList);
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        lvItemList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View v, int index, long arg3) {
                 listIndex = index;
@@ -192,7 +192,7 @@ public class ViewListActivity extends BaseActivity {
             }
         });
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvItemList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, final View v, int index, long arg3) {
                 v.setBackgroundColor(Color.parseColor("#d0d0d0"));
@@ -233,8 +233,8 @@ public class ViewListActivity extends BaseActivity {
             }
         });
 
-        addItemBtn = (Button) findViewById(R.id.button1);
-        addItemBtn.setOnClickListener(new OnClickListener() {
+        btnAddItem = (Button) findViewById(R.id.addItemBtn);
+        btnAddItem.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
