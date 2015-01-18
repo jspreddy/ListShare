@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.EditText;
 
 import com.listshare.app.objects.Items;
 import com.listshare.app.objects.ListItemsObject;
@@ -89,10 +90,10 @@ public class ViewListActivity extends BaseActivity {
     ListView lvItemList;
     Button btnAddItem;
     String listId;
-    Intent i;
+    Intent addItemActivityIntent;
     ProgressDialog pdMain;
     ArrayList<Items> listOfItems;
-
+    EditText etAddListItem;
     ListObject listObject;
 
     int mainColor, listIndex;
@@ -135,18 +136,18 @@ public class ViewListActivity extends BaseActivity {
         pdMain.setCancelable(false);
         pdMain.setMessage("Loading List");
         pdMain.show();
-
+        listOfItems = new ArrayList<Items>();
+        lvItemList = (ListView) findViewById(R.id.itemList);
+        btnAddItem = (Button) findViewById(R.id.addItemBtn);
         mainColor = Color.parseColor("#FF8800");
+        etAddListItem = (EditText) findViewById(R.id.etAddListItem);
+        addItemActivityIntent = new Intent(ViewListActivity.this, AddItemActivity.class);
 
         if (getIntent().getExtras() != null) {
             listId = getIntent().getExtras().getString("list_id");
         } else {
             finish();
         }
-
-        listOfItems = new ArrayList<Items>();
-
-        lvItemList = (ListView) findViewById(R.id.itemList);
 
         lvItemList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -157,11 +158,10 @@ public class ViewListActivity extends BaseActivity {
                 alert.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        i = new Intent(ViewListActivity.this, AddItemActivity.class);
-                        i.putExtra("ListId", listId);
-                        i.putExtra("flag", 2);
-                        i.putExtra("ItemId", listOfItems.get(listIndex).getId());
-                        startActivityForResult(i, 0);
+                        addItemActivityIntent.putExtra("ListId", listId);
+                        addItemActivityIntent.putExtra("flag", 2);
+                        addItemActivityIntent.putExtra("ItemId", listOfItems.get(listIndex).getId());
+                        startActivityForResult(addItemActivityIntent, 0);
                     }
                 });
 
@@ -233,16 +233,27 @@ public class ViewListActivity extends BaseActivity {
             }
         });
 
-        btnAddItem = (Button) findViewById(R.id.addItemBtn);
         btnAddItem.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(ViewListActivity.this, AddItemActivity.class);
-                i.putExtra("ListId", listId);
-                i.putExtra("flag", 1);
-                i.putExtra("ItemId", "");
-                startActivityForResult(i, 0);
+                String itemString = etAddListItem.getText().toString();
+                if(!itemString.isEmpty()){
+                    //TODO: parse string and determine the item params and create a new item.
+
+                    boolean correctFormat = false;
+
+                    if(correctFormat) {
+                        //TODO: save list item object and return.
+                        return;
+                    }
+                    addItemActivityIntent.putExtra("WrongUsage", itemString);
+                }
+
+                addItemActivityIntent.putExtra("ListId", listId);
+                addItemActivityIntent.putExtra("flag", 1);
+                addItemActivityIntent.putExtra("ItemId", "");
+                startActivityForResult(addItemActivityIntent, 0);
             }
         });
     }
