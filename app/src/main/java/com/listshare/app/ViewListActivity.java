@@ -87,18 +87,18 @@ public class ViewListActivity extends BaseActivity {
     }
 
     ListView listView;
-    Button b;
+    Button addItemBtn;
     String listId;
     Intent i;
     ProgressDialog pdMain;
-    ArrayList<Items> listofItem;
+    ArrayList<Items> listOfItems;
 
     ListObject listObject;
 
     int mainColor, listIndex;
 
     private void DisplayListContents() {
-        listofItem.clear();
+        listOfItems.clear();
 
         ParseQuery<ListItemsObject> itemsQuery = ListItemsObject.getQuery();
         itemsQuery.include("editedBy");
@@ -109,14 +109,14 @@ public class ViewListActivity extends BaseActivity {
             public void done(List<ListItemsObject> item, ParseException e) {
                 for (ListItemsObject obj : item) {
                     ParseUser editedBy = obj.getParseUser("editedBy");
-                    listofItem.add(new Items(obj.getId(), obj.getName(), editedBy.getUsername(), obj.getUnit(), obj.getQuantity(), obj.getCount(), obj.getState()));
+                    listOfItems.add(new Items(obj.getId(), obj.getName(), editedBy.getUsername(), obj.getUnit(), obj.getQuantity(), obj.getCount(), obj.getState()));
                 }
 
                 if (pdMain != null) {
                     pdMain.dismiss();
                 }
-                if (listofItem != null) {
-                    ListItemAdapter adapter = new ListItemAdapter(ViewListActivity.this, listofItem);
+                if (listOfItems != null) {
+                    ListItemAdapter adapter = new ListItemAdapter(ViewListActivity.this, listOfItems);
                     listView.setAdapter(adapter);
                 } else {
                     Toast.makeText(ViewListActivity.this, "No itemsto display", Toast.LENGTH_SHORT).show();
@@ -144,7 +144,7 @@ public class ViewListActivity extends BaseActivity {
             finish();
         }
 
-        listofItem = new ArrayList<Items>();
+        listOfItems = new ArrayList<Items>();
 
         listView = (ListView) findViewById(R.id.listView1);
 
@@ -160,7 +160,7 @@ public class ViewListActivity extends BaseActivity {
                         i = new Intent(ViewListActivity.this, AddItemActivity.class);
                         i.putExtra("ListId", listId);
                         i.putExtra("flag", 2);
-                        i.putExtra("ItemId", listofItem.get(listIndex).getId());
+                        i.putExtra("ItemId", listOfItems.get(listIndex).getId());
                         startActivityForResult(i, 0);
                     }
                 });
@@ -168,9 +168,9 @@ public class ViewListActivity extends BaseActivity {
                 alert.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        // listofItem.remove(listofItem);
+                        // listOfItems.remove(listOfItems);
                         ParseQuery<ListItemsObject> query = ListItemsObject.getQuery();
-                        query.getInBackground(listofItem.get(listIndex).getId(), new GetCallback<ListItemsObject>() {
+                        query.getInBackground(listOfItems.get(listIndex).getId(), new GetCallback<ListItemsObject>() {
                             @Override
                             public void done(ListItemsObject object, ParseException e) {
                                 if (e == null) {
@@ -197,7 +197,7 @@ public class ViewListActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> arg0, final View v, int index, long arg3) {
                 v.setBackgroundColor(Color.parseColor("#d0d0d0"));
                 ParseQuery<ListItemsObject> query = ListItemsObject.getQuery();
-                String id = listofItem.get(index).getId();
+                String id = listOfItems.get(index).getId();
                 if (id != null) {
                     query.getInBackground(id, new GetCallback<ListItemsObject>() {
                         @Override
@@ -233,8 +233,8 @@ public class ViewListActivity extends BaseActivity {
             }
         });
 
-        b = (Button) findViewById(R.id.button1);
-        b.setOnClickListener(new OnClickListener() {
+        addItemBtn = (Button) findViewById(R.id.button1);
+        addItemBtn.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
