@@ -32,6 +32,9 @@ import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+import helpers.ItemCreationTextInputParser;
+
+import helpers.ItemCreationTextInputParser;
 
 public class ViewListActivity extends BaseActivity {
 
@@ -237,23 +240,24 @@ public class ViewListActivity extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-                String itemString = etAddListItem.getText().toString();
-                if(!itemString.isEmpty()){
-                    //TODO: parse string and determine the item params and create a new item.
+            String itemString = etAddListItem.getText().toString();
+            if(!itemString.isEmpty()){
+                //TODO: parse string and determine the item params and create a new item.
+                ItemCreationTextInputParser parser = new ItemCreationTextInputParser(itemString);
 
-                    boolean correctFormat = false;
+                boolean correctFormat = false;
 
-                    if(correctFormat) {
-                        //TODO: save list item object and return.
-                        return;
-                    }
-                    addItemActivityIntent.putExtra("WrongUsage", itemString);
+                if(correctFormat) {
+                    //TODO: save list item object and return.
+                    return;
                 }
+                addItemActivityIntent.putExtra("WrongUsage", itemString);
+            }
 
-                addItemActivityIntent.putExtra("ListId", listId);
-                addItemActivityIntent.putExtra("flag", 1);
-                addItemActivityIntent.putExtra("ItemId", "");
-                startActivityForResult(addItemActivityIntent, 0);
+            addItemActivityIntent.putExtra("ListId", listId);
+            addItemActivityIntent.putExtra("flag", 1);
+            addItemActivityIntent.putExtra("ItemId", "");
+            startActivityForResult(addItemActivityIntent, 0);
             }
         });
     }
